@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Aire Acondicionado",
-  "short_name": "Aire Acond",
+  "name": "Gestión Escolar",
+  "short_name": "Gestión Escolar",
   "description": "Sistema Integral de Gestión Escolar y Control Académico - CRECE Plantel Agua Dulce",
   "start_url": "/",
   "scope": "/",

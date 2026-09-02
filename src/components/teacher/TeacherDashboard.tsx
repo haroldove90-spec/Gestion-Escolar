@@ -183,71 +183,20 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
 
   return (
     <div className="space-y-6 pb-16">
-      {/* Sub-nav tabs for Instructores */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none text-xs">
-        <button
-          onClick={() => onSelectModule('attendance')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'attendance'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <CheckSquare className="w-4 h-4" />
-          <span>Pase de Lista Digital</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('grading')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'grading'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <Award className="w-4 h-4" />
-          <span>Evaluación y Calificaciones</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('tasks')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'tasks'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <FileText className="w-4 h-4" />
-          <span>Prácticas y Evidencias</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('communication')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'communication'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <MessageSquare className="w-4 h-4" />
-          <span>Tablero de Avisos</span>
-        </button>
-      </div>
-
       {/* MODULE 1: Pase de Lista Digital */}
       {activeModule === 'attendance' && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Pase de Lista Digital por Sesión</h2>
-              <p className="text-xs text-slate-500">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Pase de Lista Digital por Sesión</h2>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">
                 Taller: <strong className="text-slate-800">Aire Acondicionado y Refrigeración</strong> • Sesión #{localAttendance.sesionNumero} ({localAttendance.fecha})
               </p>
             </div>
 
             <button
               onClick={handleSaveAttendance}
-              className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+              className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>Guardar Pase de Lista</span>
@@ -255,21 +204,21 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
           </div>
 
           {attendanceSaved && (
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
               <span>¡Pase de lista guardado exitosamente en el expediente escolar!</span>
             </div>
           )}
 
           {/* Attendance Table */}
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-extrabold tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-4">Estudiante</th>
-                  <th className="py-3 px-4">Matrícula</th>
-                  <th className="py-3 px-4 text-center">Estado de Asistencia</th>
-                  <th className="py-3 px-4 text-right">% Asistencia Acumulado</th>
+                  <th className="py-3.5 px-4">Estudiante</th>
+                  <th className="py-3.5 px-4">Matrícula</th>
+                  <th className="py-3.5 px-4 text-center">Estado de Asistencia</th>
+                  <th className="py-3.5 px-4 text-right">% Asistencia Acumulado</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -277,19 +226,19 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                   const studentData = students.find(s => s.id === alm.estudianteId);
                   return (
                     <tr key={alm.estudianteId} className="hover:bg-slate-50/70 transition">
-                      <td className="py-3 px-4 font-bold text-slate-900">
+                      <td className="py-3.5 px-4 font-bold text-slate-900 text-sm sm:text-base">
                         {alm.estudianteNombre}
                       </td>
-                      <td className="py-3 px-4 font-mono text-blue-600 font-semibold">
+                      <td className="py-3.5 px-4 font-mono text-blue-600 font-bold text-sm">
                         {alm.matricula}
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center justify-center gap-1.5">
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => handleToggleAttendance(alm.estudianteId, 'P')}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
                               alm.estado === 'P'
-                                ? 'bg-emerald-600 text-white shadow-xs'
+                                ? 'bg-emerald-600 text-white shadow-xs scale-105'
                                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
                             }`}
                           >
@@ -297,9 +246,9 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                           </button>
                           <button
                             onClick={() => handleToggleAttendance(alm.estudianteId, 'R')}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
                               alm.estado === 'R'
-                                ? 'bg-amber-600 text-white shadow-xs'
+                                ? 'bg-amber-600 text-white shadow-xs scale-105'
                                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
                             }`}
                           >
@@ -307,9 +256,9 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                           </button>
                           <button
                             onClick={() => handleToggleAttendance(alm.estudianteId, 'F')}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
                               alm.estado === 'F'
-                                ? 'bg-red-600 text-white shadow-xs'
+                                ? 'bg-red-600 text-white shadow-xs scale-105'
                                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
                             }`}
                           >
@@ -317,9 +266,9 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                           </button>
                           <button
                             onClick={() => handleToggleAttendance(alm.estudianteId, 'J')}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
                               alm.estado === 'J'
-                                ? 'bg-blue-600 text-white shadow-xs'
+                                ? 'bg-blue-600 text-white shadow-xs scale-105'
                                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
                             }`}
                           >
@@ -327,7 +276,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                           </button>
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-emerald-600">
+                      <td className="py-3.5 px-4 text-right font-mono font-black text-emerald-600 text-base">
                         {studentData?.asistenciaPorcentaje || 95.0}%
                       </td>
                     </tr>
@@ -341,17 +290,17 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
 
       {/* MODULE 2: Evaluación y Calificaciones */}
       {activeModule === 'grading' && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Captura de Calificaciones y Cierre de Actas</h2>
-              <p className="text-xs text-slate-500">Ponderación oficial: <strong className="text-slate-800">70% Prácticas de Taller</strong> + <strong className="text-slate-800">30% Examen Teórico</strong>.</p>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Captura de Calificaciones y Cierre de Actas</h2>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Ponderación oficial: <strong className="text-slate-800">70% Prácticas de Taller</strong> + <strong className="text-slate-800">30% Examen Teórico</strong>.</p>
             </div>
 
             <button
               onClick={handleCloseActas}
               disabled={gradesLocked}
-              className={`flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs font-bold shadow-xs transition ${
+              className={`flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl text-sm font-bold shadow-xs transition ${
                 gradesLocked
                   ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
                   : 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer'
@@ -363,26 +312,26 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
           </div>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-extrabold tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-4">Estudiante</th>
-                  <th className="py-3 px-3 text-center">Práctica 1 (70%)</th>
-                  <th className="py-3 px-3 text-center">Práctica 2 (70%)</th>
-                  <th className="py-3 px-3 text-center">Práctica 3 (70%)</th>
-                  <th className="py-3 px-3 text-center">Examen Teórico (30%)</th>
-                  <th className="py-3 px-4 text-center">Promedio Final</th>
-                  <th className="py-3 px-4 text-right">Estatus</th>
+                  <th className="py-3.5 px-4">Estudiante</th>
+                  <th className="py-3.5 px-3 text-center">Práctica 1 (70%)</th>
+                  <th className="py-3.5 px-3 text-center">Práctica 2 (70%)</th>
+                  <th className="py-3.5 px-3 text-center">Práctica 3 (70%)</th>
+                  <th className="py-3.5 px-3 text-center">Examen Teórico (30%)</th>
+                  <th className="py-3.5 px-4 text-center">Promedio Final</th>
+                  <th className="py-3.5 px-4 text-right">Estatus</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
                 {localGrades.map((gr) => (
                   <tr key={gr.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3 px-4">
-                      <div className="font-bold text-slate-900">{gr.estudianteNombre}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">{gr.matricula}</div>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-slate-900 text-sm sm:text-base">{gr.estudianteNombre}</div>
+                      <div className="text-xs text-slate-500 font-mono">{gr.matricula}</div>
                     </td>
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-3.5 px-3 text-center">
                       <input
                         type="number"
                         step="0.1"
@@ -391,10 +340,10 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                         value={gr.practica1}
                         disabled={gradesLocked}
                         onChange={(e) => handleUpdateGradeVal(gr.estudianteId, 'practica1', parseFloat(e.target.value) || 0)}
-                        className="w-16 py-1 px-2 text-center bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-500"
+                        className="w-20 py-1.5 px-2 text-center bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-sm focus:outline-none focus:border-blue-500"
                       />
                     </td>
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-3.5 px-3 text-center">
                       <input
                         type="number"
                         step="0.1"
@@ -403,10 +352,10 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                         value={gr.practica2}
                         disabled={gradesLocked}
                         onChange={(e) => handleUpdateGradeVal(gr.estudianteId, 'practica2', parseFloat(e.target.value) || 0)}
-                        className="w-16 py-1 px-2 text-center bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-500"
+                        className="w-20 py-1.5 px-2 text-center bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-sm focus:outline-none focus:border-blue-500"
                       />
                     </td>
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-3.5 px-3 text-center">
                       <input
                         type="number"
                         step="0.1"
@@ -415,10 +364,10 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                         value={gr.practica3}
                         disabled={gradesLocked}
                         onChange={(e) => handleUpdateGradeVal(gr.estudianteId, 'practica3', parseFloat(e.target.value) || 0)}
-                        className="w-16 py-1 px-2 text-center bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-500"
+                        className="w-20 py-1.5 px-2 text-center bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-sm focus:outline-none focus:border-blue-500"
                       />
                     </td>
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-3.5 px-3 text-center">
                       <input
                         type="number"
                         step="0.1"
@@ -427,16 +376,16 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                         value={gr.examenTeorico}
                         disabled={gradesLocked}
                         onChange={(e) => handleUpdateGradeVal(gr.estudianteId, 'examenTeorico', parseFloat(e.target.value) || 0)}
-                        className="w-16 py-1 px-2 text-center bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-mono focus:outline-none focus:border-blue-500"
+                        className="w-20 py-1.5 px-2 text-center bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-sm focus:outline-none focus:border-blue-500"
                       />
                     </td>
-                    <td className="py-3 px-4 text-center">
-                      <span className="font-mono font-black text-sm text-emerald-600">
+                    <td className="py-3.5 px-4 text-center">
+                      <span className="font-mono font-black text-base text-emerald-600">
                         {gr.promedioFinal}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <td className="py-3.5 px-4 text-right">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
                         {gr.promedioFinal >= 8.0 ? 'Aprobado' : 'Reprobado'}
                       </span>
                     </td>
@@ -451,15 +400,15 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
       {/* MODULE 3: Manejo de Actividades y Tareas */}
       {activeModule === 'tasks' && (
         <div className="space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Manejo de Prácticas y Revisión de Evidencias</h2>
-              <p className="text-xs text-slate-500">Creación de prácticas de taller y asignación de notas con retroalimentación a evidencias.</p>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Manejo de Prácticas y Revisión de Evidencias</h2>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Creación de prácticas de taller y asignación de notas con retroalimentación a evidencias.</p>
             </div>
 
             <button
               onClick={() => setShowNewTaskModal(true)}
-              className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+              className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Nueva Práctica de Taller</span>
@@ -469,25 +418,25 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
           {/* Assigned Tasks Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {tasks.map((tk) => (
-              <div key={tk.id} className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-xs flex flex-col justify-between">
+              <div key={tk.id} className="p-5 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-xs flex flex-col justify-between">
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center text-[10px]">
-                    <span className="px-2 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="px-2.5 py-1 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
                       Valor: {tk.valorPorcentaje}%
                     </span>
-                    <span className="text-slate-400 font-mono">Entrega: {tk.fechaEntrega}</span>
+                    <span className="text-slate-500 font-mono font-medium">Entrega: {tk.fechaEntrega}</span>
                   </div>
 
-                  <h3 className="text-xs font-bold text-slate-900 leading-snug">{tk.titulo}</h3>
-                  <p className="text-[11px] text-slate-600 line-clamp-2">{tk.descripcion}</p>
+                  <h3 className="text-base font-bold text-slate-900 leading-snug">{tk.titulo}</h3>
+                  <p className="text-sm text-slate-600 line-clamp-2 font-normal">{tk.descripcion}</p>
                 </div>
 
-                <div className="border-t border-slate-100 pt-2 flex justify-between items-center text-xs">
-                  <span className="text-slate-500 text-[10px]">
-                    Entregas: <strong className="text-emerald-700">{tk.evidenciasRecibidas}/{tk.totalAlumnos}</strong>
+                <div className="border-t border-slate-100 pt-3 flex justify-between items-center text-sm">
+                  <span className="text-slate-600 text-xs font-medium">
+                    Entregas: <strong className="text-emerald-700 text-sm">{tk.evidenciasRecibidas}/{tk.totalAlumnos}</strong>
                   </span>
-                  <span className="text-[10px] text-blue-600 flex items-center gap-1 font-semibold">
-                    <FileDown className="w-3.5 h-3.5" />
+                  <span className="text-xs text-blue-600 flex items-center gap-1 font-bold">
+                    <FileDown className="w-4 h-4" />
                     Guía PDF
                   </span>
                 </div>
@@ -497,45 +446,45 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
 
           {/* Evidences from Students Table */}
           <div className="space-y-3 pt-2">
-            <h3 className="text-sm font-bold text-slate-800">Evidencias Recibidas de Alumnos</h3>
+            <h3 className="text-base font-bold text-slate-800">Evidencias Recibidas de Alumnos</h3>
 
             <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-extrabold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="py-3 px-4">Alumno</th>
-                    <th className="py-3 px-4">Práctica / Evidencia</th>
-                    <th className="py-3 px-4">Fecha de Envío</th>
-                    <th className="py-3 px-4">Calificación</th>
-                    <th className="py-3 px-4 text-right">Revisar</th>
+                    <th className="py-3.5 px-4">Alumno</th>
+                    <th className="py-3.5 px-4">Práctica / Evidencia</th>
+                    <th className="py-3.5 px-4">Fecha de Envío</th>
+                    <th className="py-3.5 px-4">Calificación</th>
+                    <th className="py-3.5 px-4 text-right">Revisar</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
                   {submissions.map((sub) => (
                     <tr key={sub.id} className="hover:bg-slate-50/70 transition">
-                      <td className="py-3 px-4 font-bold text-slate-900">
+                      <td className="py-3.5 px-4 font-bold text-slate-900 text-sm sm:text-base">
                         {sub.estudianteNombre}
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-slate-800">{sub.actividadTitulo}</div>
-                        <div className="text-[10px] text-blue-600 font-mono">{sub.archivoNombre}</div>
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-slate-800 text-sm">{sub.actividadTitulo}</div>
+                        <div className="text-xs text-blue-600 font-mono font-medium">{sub.archivoNombre}</div>
                       </td>
-                      <td className="py-3 px-4 text-slate-500 text-[11px] font-mono">
+                      <td className="py-3.5 px-4 text-slate-500 text-xs font-mono">
                         {sub.fechaEnvio}
                       </td>
-                      <td className="py-3 px-4">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <td className="py-3.5 px-4">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                           {sub.calificacion !== undefined ? `${sub.calificacion} / 10` : 'Pendiente'}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-3.5 px-4 text-right">
                         <button
                           onClick={() => {
                             setSelectedSub(sub);
                             setGradeInput(String(sub.calificacion || 10));
                             setFeedbackInput(sub.retroalimentacion || '');
                           }}
-                          className="py-1 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-[11px] font-semibold transition cursor-pointer"
+                          className="py-1.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold transition cursor-pointer"
                         >
                           Evaluar
                         </button>

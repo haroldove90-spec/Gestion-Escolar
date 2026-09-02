@@ -78,30 +78,30 @@ export const HomeRoleSelector: React.FC<HomeRoleSelectorProps> = ({
       </div>
 
       {/* Main Content Area: Centered Hero Logo & Clean Sleek Role Cards */}
-      <div className="w-full max-w-5xl mx-auto my-auto flex flex-col items-center text-center py-8">
+      <div className="w-full max-w-5xl mx-auto my-auto flex flex-col items-center text-center py-6 sm:py-8">
         {/* Sleek Hero Logo Section */}
-        <div className="text-center mb-8 sm:mb-10">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-inner">
+        <div className="text-center mb-6 sm:mb-10">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-inner">
             <Wind className="w-10 h-10 sm:w-12 sm:h-12" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-800 tracking-tight">
             Bienvenido al Panel de Control
           </h2>
-          <p className="text-slate-500 mt-2 text-sm sm:text-base max-w-lg mx-auto">
+          <p className="text-slate-600 mt-2 text-base sm:text-lg max-w-xl mx-auto font-medium">
             Seleccione su perfil para acceder a los módulos correspondientes
           </p>
         </div>
 
-        {/* Roles Grid: ONLY Logo/Icon and Role Name (No Descriptions as strictly requested) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 w-full max-w-5xl">
+        {/* Roles Grid: 2 Columns on Mobile, Separated Cards, Larger Readable Text */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full max-w-5xl">
           {(roles || ROLES_DATA).map((role) => (
             <div
               key={role?.id || Math.random()}
               onClick={() => role?.id && onSelectRole(role.id)}
-              className="group bg-white border border-slate-200 p-7 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-200 cursor-pointer flex flex-col items-center text-center"
+              className="group bg-white border border-slate-200 p-5 sm:p-7 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-400 hover:scale-[1.02] transition-all duration-200 cursor-pointer flex flex-col items-center text-center justify-center"
             >
               {role?.id && getRoleIconBadge(role.id)}
-              <span className="text-base sm:text-lg font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
+              <span className="text-sm sm:text-base lg:text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug">
                 {role?.name || ''}
               </span>
             </div>

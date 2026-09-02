@@ -219,105 +219,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   return (
     <div className="space-y-6 pb-16">
-      {/* Sub-navigation tabs for Dirección y Administración */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none text-xs">
-        <button
-          onClick={() => onSelectModule('journey')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'journey'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <Workflow className="w-4 h-4" />
-          <span>Flujo Operativo</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('students')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'students'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          <span>Expedientes</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('cashier')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'cashier'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <CreditCard className="w-4 h-4" />
-          <span>Caja y Cobranza</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('workshops')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'workshops'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          <span>Talleres y Grupos</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('credentials')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'credentials'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <QrCode className="w-4 h-4" />
-          <span>Credencialización</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('whatsapp')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'whatsapp'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <MessageSquare className="w-4 h-4 text-emerald-600" />
-          <span>WhatsApp API</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('announcements')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'announcements'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <Bell className="w-4 h-4" />
-          <span>Comunicados</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('teachers')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'teachers'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <GraduationCap className="w-4 h-4" />
-          <span>Instructores</span>
-        </button>
-      </div>
-
       {/* MODULE 1: Flujo Operativo Escolar (User Journey) */}
       {activeModule === 'journey' && (
         <div className="space-y-6">
@@ -330,29 +231,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           />
 
           {/* Key Metrics Overview */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] font-bold uppercase text-slate-500">Total Alumnos Activos</span>
-              <div className="text-2xl font-black text-blue-600 mt-1">{students.filter(s => s.estatus === 'activo').length}</div>
-              <p className="text-[10px] text-slate-400 mt-0.5">Ciclo 2026-A</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs font-bold uppercase text-slate-500">Total Alumnos Activos</span>
+              <div className="text-3xl font-black text-blue-600 mt-1">{students.filter(s => s.estatus === 'activo').length}</div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">Ciclo 2026-A</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] font-bold uppercase text-slate-500">Talleres Abiertos</span>
-              <div className="text-2xl font-black text-emerald-600 mt-1">{workshops.length}</div>
-              <p className="text-[10px] text-slate-400 mt-0.5">100% con cupo activo</p>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs font-bold uppercase text-slate-500">Talleres Abiertos</span>
+              <div className="text-3xl font-black text-emerald-600 mt-1">{workshops.length}</div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">100% con cupo activo</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] font-bold uppercase text-slate-500">Ingresos del Mes</span>
-              <div className="text-2xl font-black text-amber-600 mt-1">${totalRecaudado.toLocaleString()}</div>
-              <p className="text-[10px] text-slate-400 mt-0.5">Caja & Transferencias</p>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs font-bold uppercase text-slate-500">Ingresos del Mes</span>
+              <div className="text-3xl font-black text-amber-600 mt-1">${totalRecaudado.toLocaleString()}</div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">Caja & Transferencias</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] font-bold uppercase text-slate-500">Docentes Titulares</span>
-              <div className="text-2xl font-black text-indigo-600 mt-1">{teachers.length}</div>
-              <p className="text-[10px] text-slate-400 mt-0.5">Certificados STPS</p>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs font-bold uppercase text-slate-500">Docentes Titulares</span>
+              <div className="text-3xl font-black text-indigo-600 mt-1">{teachers.length}</div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">Certificados STPS</p>
             </div>
           </div>
         </div>
@@ -360,15 +261,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* MODULE 2: Expediente y Registro de Alumnos */}
       {activeModule === 'students' && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Expediente y Registro de Alumnos</h2>
-              <p className="text-xs text-slate-500">Alta de estudiantes, matrícula única y archivo digital de documentos.</p>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Expediente y Registro de Alumnos</h2>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Alta de estudiantes, matrícula única y archivo digital de documentos.</p>
             </div>
             <button
               onClick={() => setShowNewStudentModal(true)}
-              className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+              className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Nuevo Alumno</span>
@@ -376,22 +277,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           {/* Search and Filters */}
-          <div className="flex flex-wrap gap-2.5 items-center">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="flex flex-wrap gap-3 items-center">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Buscar por nombre, CURP o matrícula..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 shadow-xs"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 shadow-xs"
               />
             </div>
 
             <select
               value={filterWorkshop}
               onChange={(e) => setFilterWorkshop(e.target.value)}
-              className="py-2 px-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-blue-500 shadow-xs"
+              className="py-2.5 px-4 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 font-medium focus:outline-none focus:border-blue-500 shadow-xs"
             >
               <option value="all">Todos los Talleres</option>
               {workshops.map(w => (
@@ -402,7 +303,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="py-2 px-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-blue-500 shadow-xs"
+              className="py-2.5 px-4 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 font-medium focus:outline-none focus:border-blue-500 shadow-xs"
             >
               <option value="all">Todos los Estatus</option>
               <option value="activo">Activo</option>
@@ -411,61 +312,61 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </select>
           </div>
 
-          {/* Students Table */}
+          {/* Students Table - Registros con textos grandes y legibles */}
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-extrabold tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-4">Estudiante</th>
-                  <th className="py-3 px-4">Matrícula / CURP</th>
-                  <th className="py-3 px-4">Taller Inscrito</th>
-                  <th className="py-3 px-4">Documentos</th>
-                  <th className="py-3 px-4">Estatus</th>
-                  <th className="py-3 px-4 text-right">Acciones</th>
+                  <th className="py-3.5 px-4">Estudiante</th>
+                  <th className="py-3.5 px-4">Matrícula / CURP</th>
+                  <th className="py-3.5 px-4">Taller Inscrito</th>
+                  <th className="py-3.5 px-4">Documentos</th>
+                  <th className="py-3.5 px-4">Estatus</th>
+                  <th className="py-3.5 px-4 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
                 {filteredStudents.map((st) => (
                   <tr key={st.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
                         <img
                           src={st.fotoUrl}
                           alt={st.nombre}
-                          className="w-8 h-8 rounded-lg object-cover border border-slate-200 shrink-0"
+                          className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0"
                         />
                         <div>
-                          <div className="font-bold text-slate-900">{st.nombre} {st.apellidos}</div>
-                          <div className="text-[10px] text-slate-500">{st.telefono}</div>
+                          <div className="font-bold text-slate-900 text-sm sm:text-base">{st.nombre} {st.apellidos}</div>
+                          <div className="text-xs text-slate-500 font-medium">{st.telefono}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <div className="font-mono font-bold text-blue-600">{st.matricula}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">{st.curp}</div>
+                    <td className="py-3.5 px-4">
+                      <div className="font-mono font-bold text-blue-600 text-sm">{st.matricula}</div>
+                      <div className="text-xs text-slate-500 font-mono">{st.curp}</div>
                     </td>
-                    <td className="py-3 px-4">
-                      <div className="font-semibold text-slate-800 truncate max-w-[200px]">{st.tallerNombre}</div>
-                      <div className="text-[10px] text-slate-500">{st.horario}</div>
+                    <td className="py-3.5 px-4">
+                      <div className="font-semibold text-slate-800 text-sm">{st.tallerNombre}</div>
+                      <div className="text-xs text-slate-500">{st.horario}</div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4">
                       <div className="flex gap-1.5">
                         <span 
                           title="CURP Digital Cargado"
-                          className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          className="px-2 py-1 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
                         >
                           CURP
                         </span>
                         <span 
                           title="INE / Identificación Digital"
-                          className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          className="px-2 py-1 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
                         >
                           INE
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                    <td className="py-3.5 px-4">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${
                         st.estatus === 'activo'
                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           : st.estatus === 'egresado'
@@ -475,17 +376,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         {st.estatus}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => {
                             setSelectedStudentForCredential(st);
                             onSelectModule('credentials');
                           }}
                           title="Ver Credencial Digital"
-                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 border border-slate-200 transition cursor-pointer"
+                          className="p-2 rounded-xl bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 border border-slate-200 transition cursor-pointer"
                         >
-                          <QrCode className="w-3.5 h-3.5" />
+                          <QrCode className="w-4 h-4" />
                         </button>
 
                         <button
@@ -494,7 +395,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             onUpdateStudentStatus(st.id, newStatus);
                           }}
                           title="Cambiar Estatus"
-                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-[10px] font-semibold transition cursor-pointer"
+                          className="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold transition cursor-pointer"
                         >
                           {st.estatus === 'activo' ? 'Pausar' : 'Activar'}
                         </button>
@@ -511,14 +412,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* MODULE 3: Control de Caja y Pagos */}
       {activeModule === 'cashier' && (
         <div className="space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Control de Caja y Cobranza</h2>
-              <p className="text-xs text-slate-500">Cobro de inscripciones, colegiaturas y materiales. Emisión de recibos PDF oficiales.</p>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Control de Caja y Cobranza</h2>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Cobro de inscripciones, colegiaturas y materiales. Emisión de recibos PDF oficiales.</p>
             </div>
             <button
               onClick={() => setShowNewPaymentModal(true)}
-              className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+              className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
             >
               <DollarSign className="w-4 h-4" />
               <span>Registrar Cobro</span>
@@ -526,68 +427,68 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           {/* Cash Balance Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Total Recaudado</span>
-              <div className="text-2xl font-black text-emerald-600 mt-1">${totalRecaudado.toFixed(2)} MXN</div>
-              <p className="text-[10px] text-slate-400 mt-0.5">Balance activo de caja</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs uppercase font-bold text-slate-500">Total Recaudado</span>
+              <div className="text-3xl font-black text-emerald-600 mt-1">${totalRecaudado.toFixed(2)} MXN</div>
+              <p className="text-xs text-slate-500 font-medium mt-1">Balance activo de caja</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Efectivo en Ventanilla</span>
-              <div className="text-2xl font-black text-blue-600 mt-1">${pagosEfectivo.toFixed(2)} MXN</div>
-              <p className="text-[10px] text-slate-400 mt-0.5">Recaudado en caja física</p>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs uppercase font-bold text-slate-500">Efectivo en Ventanilla</span>
+              <div className="text-3xl font-black text-blue-600 mt-1">${pagosEfectivo.toFixed(2)} MXN</div>
+              <p className="text-xs text-slate-500 font-medium mt-1">Recaudado en caja física</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Transferencias SPEI</span>
-              <div className="text-2xl font-black text-indigo-600 mt-1">${pagosDigital.toFixed(2)} MXN</div>
-              <p className="text-[10px] text-slate-400 mt-0.5">Comprobantes validados</p>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs uppercase font-bold text-slate-500">Transferencias SPEI</span>
+              <div className="text-3xl font-black text-indigo-600 mt-1">${pagosDigital.toFixed(2)} MXN</div>
+              <p className="text-xs text-slate-500 font-medium mt-1">Comprobantes validados</p>
             </div>
           </div>
 
           {/* Payments Records Table */}
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-extrabold tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-4">Folio Oficial</th>
-                  <th className="py-3 px-4">Estudiante / Matrícula</th>
-                  <th className="py-3 px-4">Concepto</th>
-                  <th className="py-3 px-4">Método</th>
-                  <th className="py-3 px-4">Monto</th>
-                  <th className="py-3 px-4">Fecha</th>
-                  <th className="py-3 px-4 text-right">Recibo PDF</th>
+                  <th className="py-3.5 px-4">Folio Oficial</th>
+                  <th className="py-3.5 px-4">Estudiante / Matrícula</th>
+                  <th className="py-3.5 px-4">Concepto</th>
+                  <th className="py-3.5 px-4">Método</th>
+                  <th className="py-3.5 px-4">Monto</th>
+                  <th className="py-3.5 px-4">Fecha</th>
+                  <th className="py-3.5 px-4 text-right">Recibo PDF</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
                 {payments.map((pay) => (
                   <tr key={pay.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3 px-4 font-mono font-bold text-blue-600">
+                    <td className="py-3.5 px-4 font-mono font-bold text-blue-600 text-sm">
                       {pay.folio}
                     </td>
-                    <td className="py-3 px-4">
-                      <div className="font-bold text-slate-900">{pay.estudianteNombre}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">{pay.matricula}</div>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-slate-900 text-sm sm:text-base">{pay.estudianteNombre}</div>
+                      <div className="text-xs text-slate-500 font-mono">{pay.matricula}</div>
                     </td>
-                    <td className="py-3 px-4 font-medium text-slate-700">
+                    <td className="py-3.5 px-4 font-semibold text-slate-800 text-sm">
                       {pay.concepto}
                     </td>
-                    <td className="py-3 px-4 text-slate-500">
+                    <td className="py-3.5 px-4 text-slate-600 font-medium">
                       {pay.metodo}
                     </td>
-                    <td className="py-3 px-4 font-mono font-bold text-emerald-600">
+                    <td className="py-3.5 px-4 font-mono font-extrabold text-emerald-600 text-base">
                       ${pay.monto.toFixed(2)}
                     </td>
-                    <td className="py-3 px-4 text-slate-500 font-mono text-[11px]">
+                    <td className="py-3.5 px-4 text-slate-500 font-mono text-xs">
                       {pay.fecha}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={() => setReceiptToView(pay)}
-                        className="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-[11px] font-semibold transition cursor-pointer"
+                        className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold transition cursor-pointer"
                       >
-                        <Printer className="w-3.5 h-3.5" />
+                        <Printer className="w-4 h-4" />
                         <span>Ver Recibo</span>
                       </button>
                     </td>

@@ -269,7 +269,10 @@ export default function App() {
         onSelectStudentModule={setActiveStudentModule}
         activeStpsModule={activeStpsModule}
         onSelectStpsModule={setActiveStpsModule}
-        onOpenSidebar={() => setSidebarOpen(true)}
+        onLogout={() => {
+          setCurrentRole(null);
+          setSidebarOpen(false);
+        }}
       />
 
       {/* PWA Installation Instructions Modal */}

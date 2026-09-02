@@ -92,83 +92,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
   return (
     <div className="space-y-6 pb-16">
-      {/* Sub-nav tabs for Portal del Alumno */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none text-xs">
-        <button
-          onClick={() => onSelectModule('profile')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'profile'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <User className="w-4 h-4" />
-          <span>Perfil y Expediente</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('credential')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'credential'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <QrCode className="w-4 h-4" />
-          <span>Credencial Móvil</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('kardex')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'kardex'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <Award className="w-4 h-4" />
-          <span>Kárdex y Calificaciones</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('activities')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'activities'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <FileText className="w-4 h-4" />
-          <span>Zona de Prácticas</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('payments')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'payments'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <CreditCard className="w-4 h-4" />
-          <span>Estado de Cuenta</span>
-        </button>
-
-        <button
-          onClick={() => onSelectModule('wall')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
-            activeModule === 'wall'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-          }`}
-        >
-          <Bell className="w-4 h-4" />
-          <span>Muro de Avisos</span>
-        </button>
-      </div>
-
       {uploadSuccess && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold flex items-center gap-2">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
           <span>¡Evidencia entregada con éxito al profesor! Tu estatus ha cambiado a &quot;Pendiente de Revisión&quot;.</span>
         </div>
@@ -178,69 +103,69 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       {activeModule === 'profile' && (
         <div className="space-y-5">
           {/* Hero Profile Card */}
-          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center sm:items-start gap-5">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center sm:items-start gap-6">
             <img
               src={student.fotoUrl}
               alt={student.nombre}
-              className="w-24 h-24 rounded-2xl object-cover border-2 border-blue-500 shadow-xs shrink-0 bg-slate-100"
+              className="w-28 h-28 rounded-2xl object-cover border-2 border-blue-500 shadow-xs shrink-0 bg-slate-100"
             />
-            <div className="space-y-1 text-center sm:text-left flex-1 min-w-0">
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                <h2 className="text-xl font-extrabold text-slate-900">
+            <div className="space-y-2 text-center sm:text-left flex-1 min-w-0">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                <h2 className="text-2xl font-black text-slate-900">
                   {student.nombre} {student.apellidos}
                 </h2>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
                   {student.estatus}
                 </span>
               </div>
 
-              <p className="text-sm font-semibold text-blue-600">{student.tallerNombre}</p>
+              <p className="text-base font-bold text-blue-600">{student.tallerNombre}</p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-3 text-xs text-slate-600 border-t border-slate-100 mt-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 text-sm text-slate-700 border-t border-slate-100 mt-3 font-medium">
                 <div>
-                  <span className="text-slate-400">Matrícula Escolar: </span>
-                  <strong className="font-mono text-slate-900">{student.matricula}</strong>
+                  <span className="text-slate-500">Matrícula Escolar: </span>
+                  <strong className="font-mono text-slate-900 text-base">{student.matricula}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-400">CURP Oficial: </span>
+                  <span className="text-slate-500">CURP Oficial: </span>
                   <strong className="font-mono text-slate-900">{student.curp}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-400">Horario de Taller: </span>
-                  <span className="text-slate-800">{student.horario}</span>
+                  <span className="text-slate-500">Horario de Taller: </span>
+                  <span className="text-slate-900 font-semibold">{student.horario}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400">Fecha de Ingreso: </span>
-                  <span className="text-slate-800">{student.fechaIngreso}</span>
+                  <span className="text-slate-500">Fecha de Ingreso: </span>
+                  <span className="text-slate-900 font-semibold">{student.fechaIngreso}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Academic Stats Summary */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] uppercase font-bold text-slate-400">Promedio General</span>
-              <div className="text-2xl font-black text-emerald-600 mt-1">{student.promedioGeneral}</div>
-              <p className="text-[10px] text-slate-500 mt-0.5">Escala 0 - 10</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs uppercase font-bold text-slate-500">Promedio General</span>
+              <div className="text-3xl font-black text-emerald-600 mt-1">{student.promedioGeneral}</div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">Escala 0 - 10</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] uppercase font-bold text-slate-400">% Asistencia</span>
-              <div className="text-2xl font-black text-blue-600 mt-1">{student.asistenciaPorcentaje}%</div>
-              <p className="text-[10px] text-slate-500 mt-0.5">Cumplimiento reglamentario</p>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs uppercase font-bold text-slate-500">% Asistencia</span>
+              <div className="text-3xl font-black text-blue-600 mt-1">{student.asistenciaPorcentaje}%</div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">Cumplimiento reglamentario</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] uppercase font-bold text-slate-400">Prácticas Aprobadas</span>
-              <div className="text-2xl font-black text-indigo-600 mt-1">{submissions.length} / {tasks.length}</div>
-              <p className="text-[10px] text-slate-500 mt-0.5">En taller especializado</p>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs uppercase font-bold text-slate-500">Prácticas Aprobadas</span>
+              <div className="text-3xl font-black text-indigo-600 mt-1">{submissions.length} / {tasks.length}</div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">En taller especializado</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <span className="text-[10px] uppercase font-bold text-slate-400">Alineación STPS</span>
-              <div className="text-2xl font-black text-amber-600 mt-1">DC-3</div>
-              <p className="text-[10px] text-slate-500 mt-0.5">Elegible para constancia</p>
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-xs uppercase font-bold text-slate-500">Alineación STPS</span>
+              <div className="text-3xl font-black text-amber-600 mt-1">DC-3</div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">Elegible para constancia</p>
             </div>
           </div>
         </div>
@@ -248,10 +173,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* MODULE 2: Credencial Digital Móvil */}
       {activeModule === 'credential' && (
-        <div className="space-y-4 flex flex-col items-center">
-          <div className="w-full max-w-sm text-center">
-            <h2 className="text-base font-bold text-slate-900">Credencial Digital Móvil Oficial</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Muestra este código QR en el acceso del taller para registrar tu ingreso.</p>
+        <div className="space-y-5 flex flex-col items-center">
+          <div className="w-full max-w-md text-center">
+            <h2 className="text-xl font-bold text-slate-900">Credencial Digital Móvil Oficial</h2>
+            <p className="text-sm text-slate-600 mt-1 font-medium">Muestra este código QR en el acceso del taller para registrar tu ingreso.</p>
           </div>
 
           <CredentialCard student={student} />
@@ -260,58 +185,58 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* MODULE 3: Kárdex y Calificaciones */}
       {activeModule === 'kardex' && (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="space-y-5">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Kárdex de Calificaciones en Tiempo Real</h2>
-              <p className="text-xs text-slate-500">Registro oficial de notas por prácticas de taller (70%) y evaluaciones teóricas (30%).</p>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Kárdex de Calificaciones en Tiempo Real</h2>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Registro oficial de notas por prácticas de taller (70%) y evaluaciones teóricas (30%).</p>
             </div>
 
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition cursor-pointer"
+              className="flex items-center gap-2 py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 text-sm font-bold border border-slate-200 transition cursor-pointer"
             >
-              <Printer className="w-3.5 h-3.5" />
+              <Printer className="w-4 h-4" />
               <span>Imprimir Kárdex</span>
             </button>
           </div>
 
           {/* Detailed Grades Card */}
-          <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xs">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-5 shadow-xs">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-4">
               <div>
-                <h3 className="text-sm font-bold text-slate-900">{student.tallerNombre}</h3>
-                <p className="text-xs text-slate-500">Docente: Ing. Carlos Mendoza • Plantel Agua Dulce</p>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">{student.tallerNombre}</h3>
+                <p className="text-sm text-slate-600 font-medium mt-0.5">Docente: Ing. Carlos Mendoza • Plantel Agua Dulce</p>
               </div>
               <div className="text-right">
-                <span className="text-[10px] uppercase font-bold text-slate-400">Calificación Final</span>
-                <div className="text-2xl font-black text-emerald-600">{studentGrade.promedioFinal}</div>
+                <span className="text-xs uppercase font-bold text-slate-500">Calificación Final</span>
+                <div className="text-3xl font-black text-emerald-600">{studentGrade.promedioFinal}</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 block text-[10px]">Práctica 1 (Vacío):</span>
-                <strong className="text-base font-mono text-slate-900">{studentGrade.practica1}</strong>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <span className="text-slate-600 font-medium block text-xs">Práctica 1 (Vacío):</span>
+                <strong className="text-lg font-mono text-slate-900">{studentGrade.practica1}</strong>
               </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 block text-[10px]">Práctica 2 (R-410A):</span>
-                <strong className="text-base font-mono text-slate-900">{studentGrade.practica2}</strong>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <span className="text-slate-600 font-medium block text-xs">Práctica 2 (R-410A):</span>
+                <strong className="text-lg font-mono text-slate-900">{studentGrade.practica2}</strong>
               </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 block text-[10px]">Práctica 3 (Inverter):</span>
-                <strong className="text-base font-mono text-slate-900">{studentGrade.practica3}</strong>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <span className="text-slate-600 font-medium block text-xs">Práctica 3 (Inverter):</span>
+                <strong className="text-lg font-mono text-slate-900">{studentGrade.practica3}</strong>
               </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 block text-[10px]">Examen Teórico:</span>
-                <strong className="text-base font-mono text-slate-900">{studentGrade.examenTeorico}</strong>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <span className="text-slate-600 font-medium block text-xs">Examen Teórico:</span>
+                <strong className="text-lg font-mono text-slate-900">{studentGrade.examenTeorico}</strong>
               </div>
             </div>
 
             {studentGrade.observaciones && (
-              <div className="p-3 rounded-xl bg-blue-50/50 border border-blue-100 text-xs text-slate-700">
-                <span className="text-blue-600 font-bold block mb-0.5">Observaciones del Docente:</span>
-                <p className="italic">{studentGrade.observaciones}</p>
+              <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-100 text-sm text-slate-800">
+                <span className="text-blue-700 font-bold block mb-1">Observaciones del Docente:</span>
+                <p className="italic font-normal">{studentGrade.observaciones}</p>
               </div>
             )}
           </div>
@@ -320,46 +245,46 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* MODULE 4: Zona de Actividades y Prácticas */}
       {activeModule === 'activities' && (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-            <h2 className="text-base font-bold text-slate-900">Zona de Actividades, Guías y Entrega de Evidencias</h2>
-            <p className="text-xs text-slate-500">Descarga manuales técnicos y sube tus evidencias fotográficas o reportes de servicio.</p>
+        <div className="space-y-5">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900">Zona de Actividades, Guías y Entrega de Evidencias</h2>
+            <p className="text-sm text-slate-600 font-medium mt-0.5">Descarga manuales técnicos y sube tus evidencias fotográficas o reportes de servicio.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {tasks.map((task) => {
               const submission = submissions.find(s => s.actividadId === task.id);
               return (
-                <div key={task.id} className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xs flex flex-col justify-between">
+                <div key={task.id} className="p-6 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xs flex flex-col justify-between">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                      <span className="px-3 py-1 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
                         Ponderación: {task.valorPorcentaje}%
                       </span>
-                      <span className="text-slate-400 text-[10px] font-mono">Entrega: {task.fechaEntrega}</span>
+                      <span className="text-slate-500 font-mono font-medium">Entrega: {task.fechaEntrega}</span>
                     </div>
 
-                    <h3 className="text-sm font-bold text-slate-900 leading-snug">{task.titulo}</h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">{task.descripcion}</p>
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">{task.titulo}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed font-normal">{task.descripcion}</p>
                   </div>
 
                   {/* Submission Status */}
-                  <div className="border-t border-slate-100 pt-3 space-y-2.5">
+                  <div className="border-t border-slate-100 pt-4 space-y-3">
                     {submission ? (
-                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex justify-between items-center">
+                      <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm flex justify-between items-center">
                         <div>
-                          <span className="text-emerald-700 font-bold flex items-center gap-1">
-                            <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span className="text-emerald-700 font-bold flex items-center gap-1.5">
+                            <CheckCircle2 className="w-4 h-4" />
                             Entregada: {submission.estado}
                           </span>
-                          <span className="text-[10px] text-slate-500 block font-mono mt-0.5">
+                          <span className="text-xs text-slate-600 block font-mono mt-1">
                             {submission.archivoNombre}
                           </span>
                         </div>
                         {submission.calificacion !== undefined && (
                           <div className="text-right">
-                            <span className="text-[10px] text-slate-500 block">Nota:</span>
-                            <span className="font-mono font-bold text-emerald-600 text-sm">{submission.calificacion} / 10</span>
+                            <span className="text-xs text-slate-500 block">Nota:</span>
+                            <span className="font-mono font-black text-emerald-600 text-base">{submission.calificacion} / 10</span>
                           </div>
                         )}
                       </div>
@@ -367,9 +292,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                       <div className="flex gap-2">
                         <button
                           onClick={() => setSelectedTaskToSubmit(task)}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+                          className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
                         >
-                          <Upload className="w-3.5 h-3.5" />
+                          <Upload className="w-4 h-4" />
                           <span>Subir Evidencia</span>
                         </button>
                       </div>
@@ -384,54 +309,54 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* MODULE 5: Estado de Cuenta y Pagos */}
       {activeModule === 'payments' && (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-            <h2 className="text-base font-bold text-slate-900">Estado de Cuenta y Pagos Oficiales</h2>
-            <p className="text-xs text-slate-500">Historial de colegiaturas e inscripciones cubiertas con descarga de recibos PDF membretados.</p>
+        <div className="space-y-5">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900">Estado de Cuenta y Pagos Oficiales</h2>
+            <p className="text-sm text-slate-600 font-medium mt-0.5">Historial de colegiaturas e inscripciones cubiertas con descarga de recibos PDF membretados.</p>
           </div>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-extrabold tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-4">Folio Oficial</th>
-                  <th className="py-3 px-4">Concepto</th>
-                  <th className="py-3 px-4">Método</th>
-                  <th className="py-3 px-4">Monto</th>
-                  <th className="py-3 px-4">Fecha</th>
-                  <th className="py-3 px-4">Estatus</th>
-                  <th className="py-3 px-4 text-right">Recibo PDF</th>
+                  <th className="py-3.5 px-4">Folio Oficial</th>
+                  <th className="py-3.5 px-4">Concepto</th>
+                  <th className="py-3.5 px-4">Método</th>
+                  <th className="py-3.5 px-4">Monto</th>
+                  <th className="py-3.5 px-4">Fecha</th>
+                  <th className="py-3.5 px-4">Estatus</th>
+                  <th className="py-3.5 px-4 text-right">Recibo PDF</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
                 {studentPayments.map((pay) => (
                   <tr key={pay.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3 px-4 font-mono font-bold text-blue-600">
+                    <td className="py-3.5 px-4 font-mono font-bold text-blue-600 text-sm">
                       {pay.folio}
                     </td>
-                    <td className="py-3 px-4 font-semibold text-slate-900">
+                    <td className="py-3.5 px-4 font-bold text-slate-900 text-sm sm:text-base">
                       {pay.concepto}
                     </td>
-                    <td className="py-3 px-4 text-slate-500">
+                    <td className="py-3.5 px-4 text-slate-600 font-medium">
                       {pay.metodo}
                     </td>
-                    <td className="py-3 px-4 font-mono font-bold text-emerald-600">
+                    <td className="py-3.5 px-4 font-mono font-black text-emerald-600 text-base">
                       ${pay.monto.toFixed(2)} MXN
                     </td>
-                    <td className="py-3 px-4 text-slate-500 font-mono text-[11px]">
+                    <td className="py-3.5 px-4 text-slate-500 font-mono text-xs">
                       {pay.fecha}
                     </td>
-                    <td className="py-3 px-4">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <td className="py-3.5 px-4">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
                         {pay.estatus}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={() => setReceiptToView(pay)}
-                        className="inline-flex items-center gap-1 py-1 px-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-[11px] font-semibold transition cursor-pointer"
+                        className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 text-xs font-bold transition cursor-pointer"
                       >
-                        <Printer className="w-3.5 h-3.5" />
+                        <Printer className="w-4 h-4" />
                         <span>Ver Recibo</span>
                       </button>
                     </td>
@@ -445,32 +370,32 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* MODULE 6: Muro de Comunicados */}
       {activeModule === 'wall' && (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-            <h2 className="text-base font-bold text-slate-900">Muro Institucional y Avisos Escolares</h2>
-            <p className="text-xs text-slate-500">Avisos importantes de la dirección, fechas de talleres y convocatorias de certificación.</p>
+        <div className="space-y-5">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900">Muro Institucional y Avisos Escolares</h2>
+            <p className="text-sm text-slate-600 font-medium mt-0.5">Avisos importantes de la dirección, fechas de talleres y convocatorias de certificación.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {announcements.map((ann) => (
-              <div key={ann.id} className="p-5 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-xs">
+              <div key={ann.id} className="p-6 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-xs">
                 <div className="flex items-center justify-between">
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
                     ann.tipo === 'urgente'
                       ? 'bg-red-50 text-red-700 border border-red-200'
                       : 'bg-blue-50 text-blue-700 border border-blue-200'
                   }`}>
                     {ann.tipo}
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono">{ann.fecha}</span>
+                  <span className="text-xs text-slate-500 font-mono">{ann.fecha}</span>
                 </div>
 
-                <h3 className="text-sm font-bold text-slate-900 leading-snug">{ann.titulo}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">{ann.cuerpo}</p>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">{ann.titulo}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">{ann.cuerpo}</p>
 
-                <div className="border-t border-slate-100 pt-2 flex justify-between items-center text-[10px] text-slate-500">
-                  <span>Emisor: <strong className="text-slate-700">{ann.autor}</strong></span>
-                  <span>Dirigido a: <strong className="text-slate-700">{ann.destinatario}</strong></span>
+                <div className="border-t border-slate-100 pt-3 flex justify-between items-center text-xs text-slate-600">
+                  <span>Emisor: <strong className="text-slate-800 font-bold">{ann.autor}</strong></span>
+                  <span>Dirigido a: <strong className="text-slate-800 font-bold">{ann.destinatario}</strong></span>
                 </div>
               </div>
             ))}
