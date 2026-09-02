@@ -76,6 +76,7 @@ export interface Workshop {
   costoMensualidad: number;
   costoMaterial: number;
   estandarConocer?: string;
+  estatus?: 'activo' | 'inactivo';
 }
 
 export interface Teacher {
@@ -90,6 +91,7 @@ export interface Teacher {
   horasSemanales: number;
   fotoUrl: string;
   registroSTPS?: string;
+  estatus?: 'activo' | 'inactivo';
 }
 
 export interface DC3Record {

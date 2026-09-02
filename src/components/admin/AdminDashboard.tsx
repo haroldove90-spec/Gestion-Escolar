@@ -34,22 +34,41 @@ import {
   ArrowLeft,
   X,
   BookOpen,
-  Briefcase
+  Briefcase,
+  Edit,
+  Trash2,
+  Power,
+  PowerOff
 } from 'lucide-react';
 import { CredentialCard } from '../common/CredentialCard';
 import { ReceiptModal } from '../common/ReceiptModal';
 import { UserJourneyBanner } from '../common/UserJourneyBanner';
+import { ImageUploadField } from '../common/ImageUploadField';
+import { ConfirmationModal } from '../common/ConfirmationModal';
+import { StudentDetailModal } from '../common/StudentDetailModal';
+import { StudentEditModal } from '../common/StudentEditModal';
+import { TeacherDetailModal } from '../common/TeacherDetailModal';
+import { TeacherEditModal } from '../common/TeacherEditModal';
+import { WorkshopDetailModal } from '../common/WorkshopDetailModal';
+import { WorkshopEditModal } from '../common/WorkshopEditModal';
 
 interface AdminDashboardProps {
   activeModule: AdminModule;
   onSelectModule: (mod: AdminModule) => void;
   students: Student[];
   onAddStudent: (newStudent: Student) => void;
+  onUpdateStudent?: (updatedStudent: Student) => void;
+  onDeleteStudent?: (id: string) => void;
   onUpdateStudentStatus: (id: string, estatus: 'activo' | 'suspendido' | 'egresado') => void;
   workshops: Workshop[];
   onAddWorkshop: (ws: Workshop) => void;
+  onUpdateWorkshop?: (updatedWs: Workshop) => void;
+  onDeleteWorkshop?: (id: string) => void;
   teachers: Teacher[];
   onAddTeacher: (teacher: Teacher) => void;
+  onUpdateTeacher?: (updatedTeacher: Teacher) => void;
+  onDeleteTeacher?: (id: string) => void;
+  onToggleTeacherStatus?: (id: string) => void;
   payments: PaymentRecord[];
   onAddPayment: (payment: PaymentRecord) => void;
   announcements: Announcement[];
@@ -61,28 +80,60 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onSelectModule,
   students,
   onAddStudent,
+  onUpdateStudent,
+  onDeleteStudent,
   onUpdateStudentStatus,
   workshops,
   onAddWorkshop,
+  onUpdateWorkshop,
+  onDeleteWorkshop,
   teachers,
   onAddTeacher,
+  onUpdateTeacher,
+  onDeleteTeacher,
+  onToggleTeacherStatus,
   payments,
   onAddPayment,
   announcements,
   onAddAnnouncement
 }) => {
-  // Local state for modals & filters
+  // Local state for search & filters
   const [searchTerm, setSearchTerm] = useState('');
   const [filterWorkshop, setFilterWorkshop] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
 
   // Selected student for credential preview
-  const [selectedStudentForCredential, setSelectedStudentForCredential] = useState<Student>(students[0]);
+  const [selectedStudentForCredential, setSelectedStudentForCredential] = useState<Student>(students[0] || ({} as Student));
 
   // Selected payment for receipt modal
   const [receiptToView, setReceiptToView] = useState<PaymentRecord | null>(null);
 
-  // New Student Modal state
+  // Modals for details & editing
+  const [studentToView, setStudentToView] = useState<Student | null>(null);
+  const [studentToEdit, setStudentToEdit] = useState<Student | null>(null);
+  const [teacherToView, setTeacherToView] = useState<Teacher | null>(null);
+  const [teacherToEdit, setTeacherToEdit] = useState<Teacher | null>(null);
+  const [workshopToView, setWorkshopToView] = useState<Workshop | null>(null);
+  const [workshopToEdit, setWorkshopToEdit] = useState<Workshop | null>(null);
+
+  // Generic Confirmation modal state
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    variant: 'danger' | 'warning' | 'primary';
+    confirmText: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    variant: 'danger',
+    confirmText: 'Confirmar',
+    onConfirm: () => {}
+  });
+
+  // New Student Modal state (Creation)
   const [showNewStudentModal, setShowNewStudentModal] = useState(false);
   const [newStudentData, setNewStudentData] = useState({
     nombre: '',
@@ -91,10 +142,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     telefono: '',
     email: '',
     tallerId: workshops[0]?.id || 'ws-1',
-    horario: 'Lunes a Viernes 08:00 - 12:00'
+    horario: 'Lunes a Viernes 08:00 - 12:00',
+    fotoUrl: ''
   });
 
-  // New Teacher Modal state
+  // New Teacher Modal state (Creation)
   const [showNewTeacherModal, setShowNewTeacherModal] = useState(false);
   const [newTeacherData, setNewTeacherData] = useState({
     nombre: '',
@@ -104,10 +156,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     especialidad: 'Aire Acondicionado y Climatización Industrial',
     horasSemanales: 24,
     telefono: '923-112-4455',
-    email: ''
+    email: '',
+    fotoUrl: ''
   });
 
-  // New Workshop Modal state
+  // New Workshop Modal state (Creation)
   const [showNewWorkshopModal, setShowNewWorkshopModal] = useState(false);
   const [newWorkshopData, setNewWorkshopData] = useState({
     nombre: '',
@@ -170,7 +223,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       apellidos: newStudentData.apellidos,
       curp: newStudentData.curp.toUpperCase() || 'TEMP000000HVRMN01',
       telefono: newStudentData.telefono || '923-000-0000',
-      email: newStudentData.email || `${newStudentData.nombre.toLowerCase()}@crece.edu.mx`,
+      email: newStudentData.email || `${newStudentData.nombre.toLowerCase().replace(/\s+/g, '')}@crece.edu.mx`,
       tallerId: selectedWs.id,
       tallerNombre: selectedWs.nombre,
       horario: newStudentData.horario,
@@ -182,7 +235,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         comprobanteEstudios: true,
         fotos: true
       },
-      fotoUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
+      fotoUrl: newStudentData.fotoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
       asistenciaPorcentaje: 100,
       promedioGeneral: 10.0
     };
@@ -197,7 +250,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       telefono: '',
       email: '',
       tallerId: workshops[0]?.id || 'ws-1',
-      horario: 'Lunes a Viernes 08:00 - 12:00'
+      horario: 'Lunes a Viernes 08:00 - 12:00',
+      fotoUrl: ''
     });
   };
 
@@ -217,7 +271,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       talleresAsignados: ['ws-1'],
       telefono: newTeacherData.telefono || '923-112-4455',
       email: newTeacherData.email || `${newTeacherData.nombre.toLowerCase().replace(/\s+/g, '.')}@crece.edu.mx`,
-      fotoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80'
+      fotoUrl: newTeacherData.fotoUrl || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80',
+      estatus: 'activo'
     };
 
     onAddTeacher(teacherToAdd);
@@ -230,7 +285,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       especialidad: 'Aire Acondicionado y Climatización Industrial',
       horasSemanales: 24,
       telefono: '923-112-4455',
-      email: ''
+      email: '',
+      fotoUrl: ''
     });
   };
 
@@ -253,7 +309,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       costoMensualidad: Number(newWorkshopData.costoMensualidad) || 650,
       costoMaterial: 450,
       duracionHoras: Number(newWorkshopData.duracionHoras) || 120,
-      horarios: ['Lunes a Viernes 08:00 - 12:00', 'Sábados 08:00 - 16:00']
+      horarios: ['Lunes a Viernes 08:00 - 12:00', 'Sábados 08:00 - 16:00'],
+      estatus: 'activo'
     };
 
     onAddWorkshop(wsToAdd);
@@ -316,6 +373,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     });
   };
 
+  // Helper for deleting student
+  const confirmDeleteStudent = (student: Student) => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Eliminar Alumno Definitivamente',
+      message: `¿Estás seguro de que deseas eliminar a ${student.nombre} ${student.apellidos} (Matrícula: ${student.matricula})? Esta acción eliminará su expediente escolar.`,
+      variant: 'danger',
+      confirmText: 'Sí, Eliminar Registro',
+      onConfirm: () => {
+        if (onDeleteStudent) {
+          onDeleteStudent(student.id);
+        }
+      }
+    });
+  };
+
+  // Helper for deleting teacher
+  const confirmDeleteTeacher = (teacher: Teacher) => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Eliminar Instructor Definitivamente',
+      message: `¿Estás seguro de que deseas eliminar al docente ${teacher.nombre}?`,
+      variant: 'danger',
+      confirmText: 'Sí, Eliminar Docente',
+      onConfirm: () => {
+        if (onDeleteTeacher) {
+          onDeleteTeacher(teacher.id);
+        }
+      }
+    });
+  };
+
+  // Helper for deleting workshop
+  const confirmDeleteWorkshop = (workshop: Workshop) => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Eliminar Taller de Oficio',
+      message: `¿Estás seguro de que deseas eliminar el taller "${workshop.nombre}"?`,
+      variant: 'danger',
+      confirmText: 'Sí, Eliminar Taller',
+      onConfirm: () => {
+        if (onDeleteWorkshop) {
+          onDeleteWorkshop(workshop.id);
+        }
+      }
+    });
+  };
+
   return (
     <div className="space-y-6 pb-16">
       {/* MODULE 1: Flujo Operativo Escolar (User Journey) */}
@@ -364,7 +469,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">Expediente y Registro de Alumnos</h2>
-              <p className="text-sm text-slate-600 font-medium mt-0.5">Alta de estudiantes, matrícula única y archivo digital de documentos.</p>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Control integral: altas con fotografía, visualización, edición, desactivación y credencialización.</p>
             </div>
             <button
               onClick={() => setShowNewStudentModal(true)}
@@ -411,7 +516,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </select>
           </div>
 
-          {/* Students Table - Registros con textos grandes y legibles */}
+          {/* Students Table */}
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-extrabold tracking-wider border-b border-slate-200">
@@ -425,83 +530,124 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                {filteredStudents.map((st) => (
-                  <tr key={st.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={st.fotoUrl}
-                          alt={st.nombre}
-                          className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0"
-                        />
-                        <div>
-                          <div className="font-bold text-slate-900 text-sm sm:text-base">{st.nombre} {st.apellidos}</div>
-                          <div className="text-xs text-slate-500 font-medium">{st.telefono}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-mono font-bold text-blue-600 text-sm">{st.matricula}</div>
-                      <div className="text-xs text-slate-500 font-mono">{st.curp}</div>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-800 text-sm">{st.tallerNombre}</div>
-                      <div className="text-xs text-slate-500">{st.horario}</div>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="flex gap-1.5">
-                        <span 
-                          title="CURP Digital Cargado"
-                          className="px-2 py-1 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        >
-                          CURP
-                        </span>
-                        <span 
-                          title="INE / Identificación Digital"
-                          className="px-2 py-1 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        >
-                          INE
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${
-                        st.estatus === 'activo'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : st.estatus === 'egresado'
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'bg-amber-50 text-amber-700 border border-amber-200'
-                      }`}>
-                        {st.estatus}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedStudentForCredential(st);
-                            onSelectModule('credentials');
-                          }}
-                          title="Ver Credencial Digital"
-                          className="p-2 rounded-xl bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 border border-slate-200 transition cursor-pointer"
-                        >
-                          <QrCode className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            const newStatus = st.estatus === 'activo' ? 'suspendido' : 'activo';
-                            onUpdateStudentStatus(st.id, newStatus);
-                          }}
-                          title="Cambiar Estatus"
-                          className="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold transition cursor-pointer"
-                        >
-                          {st.estatus === 'activo' ? 'Pausar' : 'Activar'}
-                        </button>
-                      </div>
+                {filteredStudents.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-slate-400 font-medium">
+                      No se encontraron alumnos con los filtros seleccionados.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredStudents.map((st) => (
+                    <tr key={st.id} className="hover:bg-slate-50/70 transition">
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={st.fotoUrl}
+                            alt={st.nombre}
+                            className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
+                          />
+                          <div>
+                            <div className="font-bold text-slate-900 text-sm sm:text-base">{st.nombre} {st.apellidos}</div>
+                            <div className="text-xs text-slate-500 font-medium">{st.telefono}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="font-mono font-bold text-blue-600 text-sm">{st.matricula}</div>
+                        <div className="text-xs text-slate-500 font-mono">{st.curp}</div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-slate-800 text-sm">{st.tallerNombre}</div>
+                        <div className="text-xs text-slate-500">{st.horario}</div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="flex gap-1.5">
+                          <span 
+                            title="CURP Digital Cargado"
+                            className="px-2 py-1 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          >
+                            CURP
+                          </span>
+                          <span 
+                            title="INE / Identificación Digital"
+                            className="px-2 py-1 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          >
+                            INE
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${
+                          st.estatus === 'activo'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : st.estatus === 'egresado'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200'
+                        }`}>
+                          {st.estatus}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* Ver Expediente */}
+                          <button
+                            onClick={() => setStudentToView(st)}
+                            title="Ver Expediente Completo"
+                            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+
+                          {/* Credencial Digital */}
+                          <button
+                            onClick={() => {
+                              setSelectedStudentForCredential(st);
+                              onSelectModule('credentials');
+                            }}
+                            title="Ver Credencial Digital PVC con QR"
+                            className="p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition cursor-pointer"
+                          >
+                            <QrCode className="w-4 h-4" />
+                          </button>
+
+                          {/* Editar Alumno */}
+                          <button
+                            onClick={() => setStudentToEdit(st)}
+                            title="Editar Alumno y Foto"
+                            className="p-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition cursor-pointer"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+
+                          {/* Desactivar / Activar */}
+                          <button
+                            onClick={() => {
+                              const newStatus = st.estatus === 'activo' ? 'suspendido' : 'activo';
+                              onUpdateStudentStatus(st.id, newStatus);
+                            }}
+                            title={st.estatus === 'activo' ? 'Desactivar Alumno' : 'Activar Alumno'}
+                            className={`p-1.5 rounded-lg border transition cursor-pointer ${
+                              st.estatus === 'activo'
+                                ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200'
+                                : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200'
+                            }`}
+                          >
+                            {st.estatus === 'activo' ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
+                          </button>
+
+                          {/* Borrar Alumno */}
+                          <button
+                            onClick={() => confirmDeleteStudent(st)}
+                            title="Borrar Registro"
+                            className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -605,7 +751,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">Catálogo de Grupos y Talleres de Oficio</h2>
-              <p className="text-sm text-slate-600 font-medium mt-0.5">Apertura de cursos, programación de horarios, límites de cupo y asignación de profesores titulares.</p>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Apertura de cursos, programación de horarios, límites de cupo, edición y asignación de instructores.</p>
             </div>
             <button
               onClick={() => setShowNewWorkshopModal(true)}
@@ -655,20 +801,51 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 </div>
 
-                <div className="border-t border-slate-100 pt-3 flex items-center justify-between text-xs">
+                <div className="border-t border-slate-100 pt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                   <div>
                     <span className="text-[11px] text-slate-500 block">Mensualidad:</span>
                     <strong className="text-slate-900 font-mono text-sm">${ws.costoMensualidad} MXN</strong>
                   </div>
-                  <button 
-                    onClick={() => {
-                      setFilterWorkshop(ws.id);
-                      onSelectModule('students');
-                    }}
-                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 transition cursor-pointer"
-                  >
-                    Ver Alumnos
-                  </button>
+                  
+                  <div className="flex items-center gap-1.5">
+                    {/* Ver Detalles */}
+                    <button 
+                      onClick={() => setWorkshopToView(ws)}
+                      title="Ver Detalles del Taller"
+                      className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Editar */}
+                    <button 
+                      onClick={() => setWorkshopToEdit(ws)}
+                      title="Editar Taller"
+                      className="p-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition cursor-pointer"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Borrar */}
+                    <button 
+                      onClick={() => confirmDeleteWorkshop(ws)}
+                      title="Borrar Taller"
+                      className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Ver Alumnos */}
+                    <button 
+                      onClick={() => {
+                        setFilterWorkshop(ws.id);
+                        onSelectModule('students');
+                      }}
+                      className="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+                    >
+                      Alumnos
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -748,55 +925,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <h3 className="text-sm font-bold text-slate-800">Plantillas de Notificación Rápida</h3>
 
               <div className="space-y-3">
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
-                  <div className="flex justify-between items-center font-bold text-emerald-700">
-                    <span>1. Recordatorio de Colegiatura Mensual</span>
-                    <button 
-                      onClick={() => setCustomWaMsg('Estimado alumno de CRECE Plantel Agua Dulce, le recordamos que su colegiatura mensual vence el día 5. Agradecemos su puntual pago para mantener su vigencia.')}
-                      className="text-[10px] text-blue-600 underline cursor-pointer"
-                    >
-                      Usar Texto
-                    </button>
+                <div 
+                  onClick={() => setCustomWaMsg('Estimado alumno, le recordamos que su colegiatura del taller de Aire Acondicionado vence el día 5 del presente mes. Plantel CRECE.')}
+                  className="p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-emerald-400 cursor-pointer transition text-xs space-y-1"
+                >
+                  <div className="font-bold text-slate-900 flex items-center justify-between">
+                    <span>Recordatorio de Pago de Mensualidad</span>
+                    <span className="text-[10px] text-emerald-600 font-bold">Usar</span>
                   </div>
-                  <p className="text-slate-600 text-[11px]">
-                    &quot;Estimado alumno de CRECE Plantel Agua Dulce, le recordamos que su colegiatura mensual vence el día 5...&quot;
-                  </p>
+                  <p className="text-slate-600 line-clamp-2">"Estimado alumno, le recordamos que su colegiatura del taller de Aire Acondicionado vence el día 5..."</p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
-                  <div className="flex justify-between items-center font-bold text-blue-700">
-                    <span>2. Confirmación de Pago Acreditado</span>
-                    <button 
-                      onClick={() => setCustomWaMsg('¡Pago Exitoso! Su pago ha sido acreditado en el sistema escolar de CRECE. Puede consultar y descargar su recibo PDF desde su portal.')}
-                      className="text-[10px] text-blue-600 underline cursor-pointer"
-                    >
-                      Usar Texto
-                    </button>
+                <div 
+                  onClick={() => setCustomWaMsg('¡Enhorabuena! Su Constancia de Competencias Laborales STPS DC-3 ha sido generada exitosamente y está lista para descarga en el portal CRECE.')}
+                  className="p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-emerald-400 cursor-pointer transition text-xs space-y-1"
+                >
+                  <div className="font-bold text-slate-900 flex items-center justify-between">
+                    <span>Aviso de Constancia STPS DC-3 Lista</span>
+                    <span className="text-[10px] text-emerald-600 font-bold">Usar</span>
                   </div>
-                  <p className="text-slate-600 text-[11px]">
-                    &quot;¡Pago Exitoso! Su pago ha sido acreditado en el sistema escolar de CRECE...&quot;
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
-                  <div className="flex justify-between items-center font-bold text-amber-700">
-                    <span>3. Convocatoria de Evaluación CONOCER</span>
-                    <button 
-                      onClick={() => setCustomWaMsg('Aviso importante: Se ha programado su evaluación para el Estándar CONOCER EC0435 de Aire Acondicionado el próximo sábado a las 09:00 AM.')}
-                      className="text-[10px] text-blue-600 underline cursor-pointer"
-                    >
-                      Usar Texto
-                    </button>
-                  </div>
-                  <p className="text-slate-600 text-[11px]">
-                    &quot;Aviso importante: Se ha programado su evaluación para el Estándar CONOCER EC0435...&quot;
-                  </p>
+                  <p className="text-slate-600 line-clamp-2">"¡Enhorabuena! Su Constancia de Competencias Laborales STPS DC-3 ha sido generada exitosamente..."</p>
                 </div>
               </div>
             </div>
 
-            {/* Live Message Dispatcher */}
-            <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xs flex flex-col justify-between">
+            {/* Direct WhatsApp Sender */}
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xs">
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-slate-800">Emisor de Mensajes WhatsApp</h3>
 
@@ -898,7 +1052,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">Directorio y Supervisión de Instructores</h2>
-              <p className="text-sm text-slate-600 font-medium mt-0.5">Alta de docentes, registro STPS, carga horaria semanal y talleres asignados.</p>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Control de docentes: altas con fotografía, visualización de perfil, edición, activación/desactivación y acreditación STPS.</p>
             </div>
             <button
               onClick={() => setShowNewTeacherModal(true)}
@@ -912,37 +1066,95 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {teachers.map((tc) => (
               <div key={tc.id} className="p-5 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between space-y-4 shadow-xs">
-                <div className="flex gap-4 items-start">
-                  <img
-                    src={tc.fotoUrl}
-                    alt={tc.nombre}
-                    className="w-16 h-16 rounded-2xl object-cover border border-slate-200 shrink-0 bg-slate-100 shadow-xs"
-                  />
-                  <div className="min-w-0">
-                    <h3 className="text-base font-bold text-slate-900 truncate">{tc.nombre}</h3>
-                    <p className="text-xs text-blue-600 font-bold truncate mt-0.5">{tc.titulo}</p>
-                    <p className="text-xs text-slate-500 font-mono font-semibold mt-1">Cédula: {tc.cedula}</p>
-                    {tc.registroSTPS && (
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                        {tc.registroSTPS}
-                      </span>
-                    )}
+                <div>
+                  <div className="flex gap-4 items-start">
+                    <img
+                      src={tc.fotoUrl}
+                      alt={tc.nombre}
+                      className="w-16 h-16 rounded-2xl object-cover border border-slate-200 shrink-0 bg-slate-100 shadow-xs"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <h3 className="text-base font-bold text-slate-900 truncate">{tc.nombre}</h3>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                          tc.estatus !== 'inactivo'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200'
+                        }`}>
+                          {tc.estatus !== 'inactivo' ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-blue-600 font-bold truncate mt-0.5">{tc.titulo}</p>
+                      <p className="text-xs text-slate-500 font-mono font-semibold mt-1">Cédula: {tc.cedula}</p>
+                      {tc.registroSTPS && (
+                        <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                          {tc.registroSTPS}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-sm text-slate-700 border-t border-slate-100 pt-3 font-medium mt-3">
+                    <div>
+                      <span className="text-xs text-slate-500 block">Especialidad Principal:</span>
+                      <span className="text-slate-900 font-semibold">{tc.especialidad}</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-1">
+                      <span className="text-xs text-slate-500">Carga Horaria Semanal:</span>
+                      <strong className="text-emerald-700 font-mono text-sm">{tc.horasSemanales} hrs/sem</strong>
+                    </div>
+                    <div className="flex justify-between items-center text-xs text-slate-500">
+                      <span>Contacto:</span>
+                      <span className="text-slate-700 font-mono">{tc.telefono}</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2 text-sm text-slate-700 border-t border-slate-100 pt-3 font-medium">
-                  <div>
-                    <span className="text-xs text-slate-500 block">Especialidad Principal:</span>
-                    <span className="text-slate-900 font-semibold">{tc.especialidad}</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-1">
-                    <span className="text-xs text-slate-500">Carga Horaria Semanal:</span>
-                    <strong className="text-emerald-700 font-mono text-sm">{tc.horasSemanales} hrs/sem</strong>
-                  </div>
-                  <div className="flex justify-between items-center text-xs text-slate-500">
-                    <span>Contacto:</span>
-                    <span className="text-slate-700 font-mono">{tc.telefono}</span>
-                  </div>
+                {/* Teacher Action Buttons */}
+                <div className="border-t border-slate-100 pt-3 flex items-center justify-between gap-1.5">
+                  {/* Ver Perfil */}
+                  <button
+                    onClick={() => setTeacherToView(tc)}
+                    title="Ver Perfil Completo"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+
+                  {/* Editar */}
+                  <button
+                    onClick={() => setTeacherToEdit(tc)}
+                    title="Editar Docente"
+                    className="p-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition cursor-pointer"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+
+                  {/* Activar / Desactivar */}
+                  <button
+                    onClick={() => {
+                      if (onToggleTeacherStatus) {
+                        onToggleTeacherStatus(tc.id);
+                      }
+                    }}
+                    title={tc.estatus !== 'inactivo' ? 'Desactivar Docente' : 'Activar Docente'}
+                    className={`p-2 rounded-xl border transition cursor-pointer ${
+                      tc.estatus !== 'inactivo'
+                        ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200'
+                        : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200'
+                    }`}
+                  >
+                    {tc.estatus !== 'inactivo' ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
+                  </button>
+
+                  {/* Borrar */}
+                  <button
+                    onClick={() => confirmDeleteTeacher(tc)}
+                    title="Borrar Docente"
+                    className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             ))}
@@ -950,251 +1162,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* MODAL: Nuevo Alumno */}
+      {/* MODAL: Nuevo Alumno (Con campo de fotografía) */}
       {showNewStudentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-base font-bold text-slate-900 mb-4">Registro y Alta de Nuevo Alumno</h3>
-            <form onSubmit={handleCreateStudent} className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Nombre(s):</label>
-                  <input
-                    type="text"
-                    required
-                    value={newStudentData.nombre}
-                    onChange={(e) => setNewStudentData({ ...newStudentData, nombre: e.target.value })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                    placeholder="Ej. Juan Daniel"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Apellidos:</label>
-                  <input
-                    type="text"
-                    required
-                    value={newStudentData.apellidos}
-                    onChange={(e) => setNewStudentData({ ...newStudentData, apellidos: e.target.value })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                    placeholder="Ej. Ramírez Soto"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-600 font-semibold mb-1">CURP (18 caracteres):</label>
-                <input
-                  type="text"
-                  maxLength={18}
-                  value={newStudentData.curp}
-                  onChange={(e) => setNewStudentData({ ...newStudentData, curp: e.target.value })}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 uppercase font-mono focus:outline-none focus:border-blue-500"
-                  placeholder="RASJ030512HVRMN02"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Teléfono:</label>
-                  <input
-                    type="text"
-                    value={newStudentData.telefono}
-                    onChange={(e) => setNewStudentData({ ...newStudentData, telefono: e.target.value })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                    placeholder="923-102-3344"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Taller de Oficio:</label>
-                  <select
-                    value={newStudentData.tallerId}
-                    onChange={(e) => setNewStudentData({ ...newStudentData, tallerId: e.target.value })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                  >
-                    {workshops.map(w => (
-                      <option key={w.id} value={w.id}>{w.nombre}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-slate-200">
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
-                >
-                  Guardar y Generar Matrícula
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowNewStudentModal(false)}
-                  className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: Registrar Cobro */}
-      {showNewPaymentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
-            <h3 className="text-base font-bold text-slate-900 mb-4">Registro de Cobro en Caja</h3>
-            <form onSubmit={handleRegisterPayment} className="space-y-3 text-xs">
-              <div>
-                <label className="block text-slate-600 font-semibold mb-1">Alumno:</label>
-                <select
-                  value={newPaymentData.estudianteId}
-                  onChange={(e) => setNewPaymentData({ ...newPaymentData, estudianteId: e.target.value })}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                >
-                  {students.map(s => (
-                    <option key={s.id} value={s.id}>{s.nombre} {s.apellidos} ({s.matricula})</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-slate-600 font-semibold mb-1">Concepto:</label>
-                <select
-                  value={newPaymentData.concepto}
-                  onChange={(e) => setNewPaymentData({ ...newPaymentData, concepto: e.target.value as any })}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                >
-                  <option value="Colegiatura Mensual">Colegiatura Mensual ($650)</option>
-                  <option value="Inscripción">Inscripción ($850)</option>
-                  <option value="Material y Herramientas">Material y Herramientas ($450)</option>
-                  <option value="Certificación STPS">Certificación STPS ($500)</option>
-                  <option value="Examen CONOCER">Examen CONOCER ($950)</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Monto ($ MXN):</label>
-                  <input
-                    type="number"
-                    value={newPaymentData.monto}
-                    onChange={(e) => setNewPaymentData({ ...newPaymentData, monto: Number(e.target.value) })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Método de Pago:</label>
-                  <select
-                    value={newPaymentData.metodo}
-                    onChange={(e) => setNewPaymentData({ ...newPaymentData, metodo: e.target.value as any })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Transferencia SPEI">Transferencia SPEI</option>
-                    <option value="Tarjeta de Débito/Crédito">Tarjeta</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-slate-200">
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
-                >
-                  Generar Recibo Oficial PDF
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowNewPaymentModal(false)}
-                  className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: Nuevo Comunicado */}
-      {showNewAnnounceModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
-            <h3 className="text-base font-bold text-slate-900 mb-4">Publicar Nuevo Comunicado</h3>
-            <form onSubmit={handleCreateAnnouncement} className="space-y-3 text-xs">
-              <div>
-                <label className="block text-slate-600 font-semibold mb-1">Título:</label>
-                <input
-                  type="text"
-                  required
-                  value={newAnnounceData.titulo}
-                  onChange={(e) => setNewAnnounceData({ ...newAnnounceData, titulo: e.target.value })}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                  placeholder="Ej. Convocatoria para Prácticas de Taller"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-600 font-semibold mb-1">Cuerpo del Comunicado:</label>
-                <textarea
-                  rows={3}
-                  required
-                  value={newAnnounceData.cuerpo}
-                  onChange={(e) => setNewAnnounceData({ ...newAnnounceData, cuerpo: e.target.value })}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Tipo:</label>
-                  <select
-                    value={newAnnounceData.tipo}
-                    onChange={(e) => setNewAnnounceData({ ...newAnnounceData, tipo: e.target.value as any })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900"
-                  >
-                    <option value="general">General</option>
-                    <option value="urgente">Urgente</option>
-                    <option value="taller">Taller</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Destinatario:</label>
-                  <select
-                    value={newAnnounceData.destinatario}
-                    onChange={(e) => setNewAnnounceData({ ...newAnnounceData, destinatario: e.target.value })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900"
-                  >
-                    <option value="Todos">Todos los alumnos</option>
-                    <option value="Aire Acondicionado">Aire Acondicionado</option>
-                    <option value="Soldadura">Soldadura</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-slate-200">
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
-                >
-                  Publicar Comunicado
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowNewAnnounceModal(false)}
-                  className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: Nuevo Docente / Instructor */}
-      {showNewTeacherModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs animate-in fade-in">
           <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
@@ -1202,8 +1172,147 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <UserCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">Alta de Nuevo Docente / Instructor</h3>
-                  <p className="text-xs text-slate-500 font-medium">Registro con acreditación técnica y registro STPS</p>
+                  <h3 className="text-lg font-bold text-slate-900">Registro y Alta de Nuevo Alumno</h3>
+                  <p className="text-xs text-slate-500 font-medium">Expediente inicial y asignación de matrícula</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowNewStudentModal(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateStudent} className="space-y-4 text-sm">
+              {/* Campo de Fotografía */}
+              <ImageUploadField
+                label="Fotografía Oficial del Alumno (Para Credencial y Kárdex)"
+                value={newStudentData.fotoUrl}
+                onChange={(fotoUrl) => setNewStudentData({ ...newStudentData, fotoUrl })}
+                defaultAvatar="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80"
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Nombre(s) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newStudentData.nombre}
+                    onChange={(e) => setNewStudentData({ ...newStudentData, nombre: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-blue-500"
+                    placeholder="Ej. Juan Daniel"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Apellidos *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newStudentData.apellidos}
+                    onChange={(e) => setNewStudentData({ ...newStudentData, apellidos: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-blue-500"
+                    placeholder="Ej. Ramírez Soto"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">CURP (18 caracteres)</label>
+                <input
+                  type="text"
+                  maxLength={18}
+                  value={newStudentData.curp}
+                  onChange={(e) => setNewStudentData({ ...newStudentData, curp: e.target.value.toUpperCase() })}
+                  className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 uppercase font-mono focus:outline-none focus:border-blue-500"
+                  placeholder="RASJ030512HVRMN02"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Teléfono Móvil</label>
+                  <input
+                    type="text"
+                    value={newStudentData.telefono}
+                    onChange={(e) => setNewStudentData({ ...newStudentData, telefono: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                    placeholder="923-102-3344"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Correo Electrónico</label>
+                  <input
+                    type="email"
+                    value={newStudentData.email}
+                    onChange={(e) => setNewStudentData({ ...newStudentData, email: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                    placeholder="alumno@crece.edu.mx"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Taller de Oficio</label>
+                  <select
+                    value={newStudentData.tallerId}
+                    onChange={(e) => setNewStudentData({ ...newStudentData, tallerId: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-blue-500"
+                  >
+                    {workshops.map(w => (
+                      <option key={w.id} value={w.id}>{w.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Horario de Taller</label>
+                  <select
+                    value={newStudentData.horario}
+                    onChange={(e) => setNewStudentData({ ...newStudentData, horario: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="Lunes a Viernes 08:00 - 12:00">Lunes a Viernes 08:00 - 12:00</option>
+                    <option value="Lunes a Viernes 16:00 - 20:00">Lunes a Viernes 16:00 - 20:00</option>
+                    <option value="Sábados 08:00 - 16:00">Sábados 08:00 - 16:00</option>
+                    <option value="Domingos 08:00 - 16:00">Domingos 08:00 - 16:00</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
+                >
+                  Guardar y Generar Matrícula
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowNewStudentModal(false)}
+                  className="py-3 px-5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm font-semibold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Nuevo Docente / Instructor (Con campo de fotografía) */}
+      {showNewTeacherModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs animate-in fade-in">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-blue-50 text-blue-700">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Alta de Instructor Técnico</h3>
+                  <p className="text-xs text-slate-500 font-medium">Registro oficial STPS y carga horaria</p>
                 </div>
               </div>
               <button
@@ -1215,6 +1324,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
 
             <form onSubmit={handleCreateTeacher} className="space-y-4 text-sm">
+              {/* Campo de Fotografía */}
+              <ImageUploadField
+                label="Fotografía del Docente / Instructor"
+                value={newTeacherData.fotoUrl}
+                onChange={(fotoUrl) => setNewTeacherData({ ...newTeacherData, fotoUrl })}
+                defaultAvatar="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80"
+              />
+
               <div>
                 <label className="block text-slate-700 font-bold mb-1 text-xs">Nombre Completo del Instructor *</label>
                 <input
@@ -1222,8 +1339,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   required
                   value={newTeacherData.nombre}
                   onChange={(e) => setNewTeacherData({ ...newTeacherData, nombre: e.target.value })}
-                  className="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-blue-500 text-sm"
-                  placeholder="Ej. Ing. Roberto Mendoza Salazar"
+                  className="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-blue-500"
+                  placeholder="Ej. Ing. Francisco Javier Reyes"
                 />
               </div>
 
@@ -1235,7 +1352,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     value={newTeacherData.titulo}
                     onChange={(e) => setNewTeacherData({ ...newTeacherData, titulo: e.target.value })}
                     className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-500"
-                    placeholder="Ingeniero Mecánico / Técnico"
+                    placeholder="Ingeniero Mecánico / Técnico Master"
                   />
                 </div>
                 <div>
@@ -1244,8 +1361,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     type="text"
                     value={newTeacherData.cedula}
                     onChange={(e) => setNewTeacherData({ ...newTeacherData, cedula: e.target.value })}
-                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:border-blue-500"
-                    placeholder="CED-PROF-892144"
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="CED-9823412"
                   />
                 </div>
               </div>
@@ -1329,7 +1446,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* MODAL: Nuevo Taller de Oficio */}
       {showNewWorkshopModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs animate-in fade-in">
           <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
@@ -1453,8 +1570,250 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
+      {/* MODAL: Registrar Cobro */}
+      {showNewPaymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs animate-in fade-in">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
+            <h3 className="text-base font-bold text-slate-900 mb-4">Registro de Cobro en Caja</h3>
+            <form onSubmit={handleRegisterPayment} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-600 font-semibold mb-1">Alumno:</label>
+                <select
+                  value={newPaymentData.estudianteId}
+                  onChange={(e) => setNewPaymentData({ ...newPaymentData, estudianteId: e.target.value })}
+                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                >
+                  {students.map(s => (
+                    <option key={s.id} value={s.id}>{s.nombre} {s.apellidos} ({s.matricula})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-600 font-semibold mb-1">Concepto:</label>
+                <select
+                  value={newPaymentData.concepto}
+                  onChange={(e) => setNewPaymentData({ ...newPaymentData, concepto: e.target.value as any })}
+                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                >
+                  <option value="Colegiatura Mensual">Colegiatura Mensual ($650)</option>
+                  <option value="Inscripción">Inscripción ($850)</option>
+                  <option value="Material y Herramientas">Material y Herramientas ($450)</option>
+                  <option value="Certificación STPS">Certificación STPS ($500)</option>
+                  <option value="Examen CONOCER">Examen CONOCER ($950)</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 font-semibold mb-1">Monto ($ MXN):</label>
+                  <input
+                    type="number"
+                    value={newPaymentData.monto}
+                    onChange={(e) => setNewPaymentData({ ...newPaymentData, monto: Number(e.target.value) })}
+                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 font-semibold mb-1">Método de Pago:</label>
+                  <select
+                    value={newPaymentData.metodo}
+                    onChange={(e) => setNewPaymentData({ ...newPaymentData, metodo: e.target.value as any })}
+                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Transferencia SPEI">Transferencia SPEI</option>
+                    <option value="Tarjeta de Débito/Crédito">Tarjeta</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+                >
+                  Generar Recibo Oficial PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowNewPaymentModal(false)}
+                  className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Nuevo Comunicado */}
+      {showNewAnnounceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs animate-in fade-in">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
+            <h3 className="text-base font-bold text-slate-900 mb-4">Publicar Nuevo Comunicado</h3>
+            <form onSubmit={handleCreateAnnouncement} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-600 font-semibold mb-1">Título:</label>
+                <input
+                  type="text"
+                  required
+                  value={newAnnounceData.titulo}
+                  onChange={(e) => setNewAnnounceData({ ...newAnnounceData, titulo: e.target.value })}
+                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                  placeholder="Ej. Convocatoria para Prácticas de Taller"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-600 font-semibold mb-1">Cuerpo del Comunicado:</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={newAnnounceData.cuerpo}
+                  onChange={(e) => setNewAnnounceData({ ...newAnnounceData, cuerpo: e.target.value })}
+                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 font-semibold mb-1">Tipo:</label>
+                  <select
+                    value={newAnnounceData.tipo}
+                    onChange={(e) => setNewAnnounceData({ ...newAnnounceData, tipo: e.target.value as any })}
+                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="general">General</option>
+                    <option value="urgente">Urgente</option>
+                    <option value="academico">Académico</option>
+                    <option value="pago">Cobranza</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-600 font-semibold mb-1">Destinatario:</label>
+                  <select
+                    value={newAnnounceData.destinatario}
+                    onChange={(e) => setNewAnnounceData({ ...newAnnounceData, destinatario: e.target.value })}
+                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="Todos">Toda la Comunidad</option>
+                    <option value="Alumnos">Solo Alumnos</option>
+                    <option value="Docentes">Solo Instructores</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+                >
+                  Publicar Comunicado
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowNewAnnounceModal(false)}
+                  className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Detalle de Alumno */}
+      <StudentDetailModal
+        student={studentToView}
+        onClose={() => setStudentToView(null)}
+        onEdit={(st) => setStudentToEdit(st)}
+        onViewCredential={(st) => {
+          setSelectedStudentForCredential(st);
+          onSelectModule('credentials');
+        }}
+        onToggleStatus={(st) => {
+          const newStatus = st.estatus === 'activo' ? 'suspendido' : 'activo';
+          onUpdateStudentStatus(st.id, newStatus);
+        }}
+      />
+
+      {/* MODAL: Editar Alumno */}
+      <StudentEditModal
+        student={studentToEdit}
+        isOpen={Boolean(studentToEdit)}
+        onClose={() => setStudentToEdit(null)}
+        onSave={(updatedSt) => {
+          if (onUpdateStudent) {
+            onUpdateStudent(updatedSt);
+          }
+        }}
+        workshops={workshops}
+      />
+
+      {/* MODAL: Detalle de Docente */}
+      <TeacherDetailModal
+        teacher={teacherToView}
+        onClose={() => setTeacherToView(null)}
+        onEdit={(tc) => setTeacherToEdit(tc)}
+        onToggleStatus={(tc) => {
+          if (onToggleTeacherStatus) {
+            onToggleTeacherStatus(tc.id);
+          }
+        }}
+      />
+
+      {/* MODAL: Editar Docente */}
+      <TeacherEditModal
+        teacher={teacherToEdit}
+        isOpen={Boolean(teacherToEdit)}
+        onClose={() => setTeacherToEdit(null)}
+        onSave={(updatedTc) => {
+          if (onUpdateTeacher) {
+            onUpdateTeacher(updatedTc);
+          }
+        }}
+      />
+
+      {/* MODAL: Detalle de Taller */}
+      <WorkshopDetailModal
+        workshop={workshopToView}
+        onClose={() => setWorkshopToView(null)}
+        onEdit={(ws) => setWorkshopToEdit(ws)}
+        onViewStudents={(ws) => {
+          setFilterWorkshop(ws.id);
+          onSelectModule('students');
+        }}
+      />
+
+      {/* MODAL: Editar Taller */}
+      <WorkshopEditModal
+        workshop={workshopToEdit}
+        isOpen={Boolean(workshopToEdit)}
+        onClose={() => setWorkshopToEdit(null)}
+        onSave={(updatedWs) => {
+          if (onUpdateWorkshop) {
+            onUpdateWorkshop(updatedWs);
+          }
+        }}
+        teachers={teachers}
+      />
+
       {/* Recibo PDF Viewer Modal */}
       <ReceiptModal payment={receiptToView} onClose={() => setReceiptToView(null)} />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        variant={confirmModal.variant}
+        confirmText={confirmModal.confirmText}
+      />
     </div>
   );
 };

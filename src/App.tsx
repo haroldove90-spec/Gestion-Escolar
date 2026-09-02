@@ -72,6 +72,14 @@ export default function App() {
     setStudents(prev => [newStudent, ...prev]);
   };
 
+  const handleUpdateStudent = (updatedStudent: Student) => {
+    setStudents(prev => prev.map(s => s.id === updatedStudent.id ? updatedStudent : s));
+  };
+
+  const handleDeleteStudent = (id: string) => {
+    setStudents(prev => prev.filter(s => s.id !== id));
+  };
+
   const handleUpdateStudentStatus = (id: string, estatus: 'activo' | 'suspendido' | 'egresado') => {
     setStudents(prev => prev.map(s => s.id === id ? { ...s, estatus } : s));
   };
@@ -80,8 +88,28 @@ export default function App() {
     setWorkshops(prev => [...prev, ws]);
   };
 
+  const handleUpdateWorkshop = (updatedWs: Workshop) => {
+    setWorkshops(prev => prev.map(w => w.id === updatedWs.id ? updatedWs : w));
+  };
+
+  const handleDeleteWorkshop = (id: string) => {
+    setWorkshops(prev => prev.filter(w => w.id !== id));
+  };
+
   const handleAddTeacher = (teacher: Teacher) => {
     setTeachers(prev => [teacher, ...prev]);
+  };
+
+  const handleUpdateTeacher = (updatedTeacher: Teacher) => {
+    setTeachers(prev => prev.map(t => t.id === updatedTeacher.id ? updatedTeacher : t));
+  };
+
+  const handleDeleteTeacher = (id: string) => {
+    setTeachers(prev => prev.filter(t => t.id !== id));
+  };
+
+  const handleToggleTeacherStatus = (id: string) => {
+    setTeachers(prev => prev.map(t => t.id === id ? { ...t, estatus: t.estatus === 'inactivo' ? 'activo' : 'inactivo' } : t));
   };
 
   const handleAddPayment = (payment: PaymentRecord) => {
@@ -205,11 +233,18 @@ export default function App() {
               onSelectModule={setActiveAdminModule}
               students={students}
               onAddStudent={handleAddStudent}
+              onUpdateStudent={handleUpdateStudent}
+              onDeleteStudent={handleDeleteStudent}
               onUpdateStudentStatus={handleUpdateStudentStatus}
               workshops={workshops}
               onAddWorkshop={handleAddWorkshop}
+              onUpdateWorkshop={handleUpdateWorkshop}
+              onDeleteWorkshop={handleDeleteWorkshop}
               teachers={teachers}
               onAddTeacher={handleAddTeacher}
+              onUpdateTeacher={handleUpdateTeacher}
+              onDeleteTeacher={handleDeleteTeacher}
+              onToggleTeacherStatus={handleToggleTeacherStatus}
               payments={payments}
               onAddPayment={handleAddPayment}
               announcements={announcements}
