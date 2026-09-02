@@ -1,0 +1,6 @@
+{
+  "name": "Sistema Gestion Escolar",
+  "description": "Sistema Integral de Gestión Escolar y Control Académico - CRECE Plantel Agua Dulce",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

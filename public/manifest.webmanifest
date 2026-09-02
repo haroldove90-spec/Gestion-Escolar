@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "Aire Acondicionado",
+  "short_name": "Aire Acond",
+  "description": "Sistema Integral de Gestión Escolar y Control Académico - CRECE Plantel Agua Dulce",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

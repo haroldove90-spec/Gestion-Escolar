@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0284c7;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d9488;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#38bdf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2dd4bf;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#grad1)" />
+  <g fill="none" stroke="url(#grad2)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" transform="translate(40, 40) scale(0.85)">
+    <!-- Graduation Cap / Institutional Symbol -->
+    <path d="M256 60 L460 160 L256 260 L52 160 Z" fill="#0369a1" fill-opacity="0.3" stroke-width="22" stroke="#38bdf8"/>
+    <path d="M120 200 V320 C120 380 392 380 392 320 V200" stroke-width="18" stroke="#38bdf8"/>
+    <path d="M460 160 V290" stroke-width="16" stroke="#38bdf8"/>
+    <circle cx="460" cy="300" r="14" fill="#38bdf8"/>
+    <!-- Snowflake / Air Conditioning / Tech Symbol -->
+    <circle cx="256" cy="300" r="18" fill="#2dd4bf"/>
+    <path d="M256 230 V370 M186 300 H326" stroke-width="14" stroke="#2dd4bf"/>
+    <path d="M206 250 L306 350 M306 250 L206 350" stroke-width="14" stroke="#2dd4bf"/>
+  </g>
+  <text x="256" y="445" text-anchor="middle" fill="#f8fafc" font-family="system-ui, sans-serif" font-weight="800" font-size="34" letter-spacing="3">CRECE GESTIÓN</text>
+</svg>
