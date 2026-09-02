@@ -30,7 +30,11 @@ import {
   UserCheck,
   ShieldCheck,
   Building2,
-  Workflow
+  Workflow,
+  ArrowLeft,
+  X,
+  BookOpen,
+  Briefcase
 } from 'lucide-react';
 import { CredentialCard } from '../common/CredentialCard';
 import { ReceiptModal } from '../common/ReceiptModal';
@@ -45,6 +49,7 @@ interface AdminDashboardProps {
   workshops: Workshop[];
   onAddWorkshop: (ws: Workshop) => void;
   teachers: Teacher[];
+  onAddTeacher: (teacher: Teacher) => void;
   payments: PaymentRecord[];
   onAddPayment: (payment: PaymentRecord) => void;
   announcements: Announcement[];
@@ -60,6 +65,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   workshops,
   onAddWorkshop,
   teachers,
+  onAddTeacher,
   payments,
   onAddPayment,
   announcements,
@@ -86,6 +92,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     email: '',
     tallerId: workshops[0]?.id || 'ws-1',
     horario: 'Lunes a Viernes 08:00 - 12:00'
+  });
+
+  // New Teacher Modal state
+  const [showNewTeacherModal, setShowNewTeacherModal] = useState(false);
+  const [newTeacherData, setNewTeacherData] = useState({
+    nombre: '',
+    titulo: 'Ingeniero Especialista en HVAC / STPS',
+    cedula: '',
+    registroSTPS: '',
+    especialidad: 'Aire Acondicionado y Climatización Industrial',
+    horasSemanales: 24,
+    telefono: '923-112-4455',
+    email: ''
+  });
+
+  // New Workshop Modal state
+  const [showNewWorkshopModal, setShowNewWorkshopModal] = useState(false);
+  const [newWorkshopData, setNewWorkshopData] = useState({
+    nombre: '',
+    categoria: 'Refrigeración y Climatización',
+    aula: 'Nave Taller 1 - Estación A',
+    profesorId: teachers[0]?.id || '',
+    cupoMaximo: 20,
+    costoMensualidad: 650,
+    duracionHoras: 120
   });
 
   // New Payment Modal state
@@ -167,6 +198,74 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       email: '',
       tallerId: workshops[0]?.id || 'ws-1',
       horario: 'Lunes a Viernes 08:00 - 12:00'
+    });
+  };
+
+  // Handle create teacher
+  const handleCreateTeacher = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTeacherData.nombre) return;
+    const newId = `t-${Date.now()}`;
+    const teacherToAdd: Teacher = {
+      id: newId,
+      nombre: newTeacherData.nombre,
+      titulo: newTeacherData.titulo || 'Instructor Técnico Especialista',
+      cedula: newTeacherData.cedula || `CED-${Math.floor(100000 + Math.random() * 900000)}`,
+      registroSTPS: newTeacherData.registroSTPS || `STPS-CAP-2026-${String(teachers.length + 1).padStart(3, '0')}`,
+      especialidad: newTeacherData.especialidad || 'Refrigeración Industrial',
+      horasSemanales: Number(newTeacherData.horasSemanales) || 24,
+      talleresAsignados: ['ws-1'],
+      telefono: newTeacherData.telefono || '923-112-4455',
+      email: newTeacherData.email || `${newTeacherData.nombre.toLowerCase().replace(/\s+/g, '.')}@crece.edu.mx`,
+      fotoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80'
+    };
+
+    onAddTeacher(teacherToAdd);
+    setShowNewTeacherModal(false);
+    setNewTeacherData({
+      nombre: '',
+      titulo: 'Ingeniero Especialista en HVAC / STPS',
+      cedula: '',
+      registroSTPS: '',
+      especialidad: 'Aire Acondicionado y Climatización Industrial',
+      horasSemanales: 24,
+      telefono: '923-112-4455',
+      email: ''
+    });
+  };
+
+  // Handle create workshop
+  const handleCreateWorkshop = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newWorkshopData.nombre) return;
+    const selectedTeacher = teachers.find(t => t.id === newWorkshopData.profesorId) || teachers[0];
+    const newId = `ws-${Date.now()}`;
+    const wsToAdd: Workshop = {
+      id: newId,
+      nombre: newWorkshopData.nombre,
+      categoria: newWorkshopData.categoria,
+      aula: newWorkshopData.aula || 'Nave Taller 1 - Estación A',
+      profesorId: selectedTeacher?.id || 't-1',
+      profesorNombre: selectedTeacher?.nombre || 'Ing. Carlos Mendoza R.',
+      cupoMaximo: Number(newWorkshopData.cupoMaximo) || 20,
+      inscritos: 0,
+      costoInscripcion: 850,
+      costoMensualidad: Number(newWorkshopData.costoMensualidad) || 650,
+      costoMaterial: 450,
+      duracionHoras: Number(newWorkshopData.duracionHoras) || 120,
+      horarios: ['Lunes a Viernes 08:00 - 12:00', 'Sábados 08:00 - 16:00']
+    };
+
+    onAddWorkshop(wsToAdd);
+    setShowNewWorkshopModal(false);
+    setNewWorkshopData({
+      nombre: '',
+      categoria: 'Refrigeración y Climatización',
+      aula: 'Nave Taller 1 - Estación A',
+      profesorId: teachers[0]?.id || '',
+      cupoMaximo: 20,
+      costoMensualidad: 650,
+      duracionHoras: 120
     });
   };
 
@@ -502,28 +601,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* MODULE 4: Gestión de Grupos y Talleres */}
       {activeModule === 'workshops' && (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-            <h2 className="text-base font-bold text-slate-900">Catálogo de Grupos y Talleres de Oficio</h2>
-            <p className="text-xs text-slate-500">Apertura de cursos, programación de horarios, límites de cupo y asignación de profesores titulares.</p>
+        <div className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Catálogo de Grupos y Talleres de Oficio</h2>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Apertura de cursos, programación de horarios, límites de cupo y asignación de profesores titulares.</p>
+            </div>
+            <button
+              onClick={() => setShowNewWorkshopModal(true)}
+              className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Nuevo Taller de Oficio</span>
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {workshops.map((ws) => (
               <div key={ws.id} className="p-5 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between space-y-4 shadow-xs">
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
                       {ws.categoria}
                     </span>
                     <span className="text-xs font-mono text-slate-500 font-bold">{ws.duracionHoras} Horas</span>
                   </div>
 
-                  <h3 className="text-sm font-bold text-slate-900 leading-snug">
+                  <h3 className="text-base font-bold text-slate-900 leading-snug">
                     {ws.nombre}
                   </h3>
 
-                  <div className="space-y-1 text-xs text-slate-600 pt-1">
+                  <div className="space-y-1.5 text-xs text-slate-600 pt-1">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Aula/Taller:</span>
                       <strong className="text-slate-800">{ws.aula}</strong>
@@ -542,24 +650,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-2">
                     <div 
                       className="bg-blue-600 h-full rounded-full"
-                      style={{ width: `${(ws.inscritos / ws.cupoMaximo) * 100}%` }}
+                      style={{ width: `${Math.min(100, (ws.inscritos / ws.cupoMaximo) * 100)}%` }}
                     />
                   </div>
                 </div>
 
                 <div className="border-t border-slate-100 pt-3 flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-500 block">Mensualidad:</span>
-                    <strong className="text-slate-900 font-mono">${ws.costoMensualidad} MXN</strong>
+                    <span className="text-[11px] text-slate-500 block">Mensualidad:</span>
+                    <strong className="text-slate-900 font-mono text-sm">${ws.costoMensualidad} MXN</strong>
                   </div>
                   <button 
                     onClick={() => {
                       setFilterWorkshop(ws.id);
                       onSelectModule('students');
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 transition cursor-pointer"
                   >
-                    Ver Grupo
+                    Ver Alumnos
                   </button>
                 </div>
               </div>
@@ -571,31 +679,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* MODULE 5: Credencialización Digital */}
       {activeModule === 'credentials' && (
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Generador de Credenciales Digitales con QR</h2>
-              <p className="text-xs text-slate-500">Credenciales con fotografía, matrícula y código QR dinámico para validación de vigencia escolar.</p>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => onSelectModule('students')}
+                  className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition cursor-pointer"
+                  title="Volver al Listado de Alumnos"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900">Generador de Credenciales Digitales con QR</h2>
+              </div>
+              <p className="text-sm text-slate-600 font-medium mt-1">Credenciales con fotografía, matrícula y código QR dinámico para validación de vigencia escolar.</p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500">Seleccionar Alumno:</span>
-              <select
-                value={selectedStudentForCredential.id}
-                onChange={(e) => {
-                  const found = students.find(s => s.id === e.target.value);
-                  if (found) setSelectedStudentForCredential(found);
-                }}
-                className="py-1.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => onSelectModule('students')}
+                className="flex items-center gap-2 py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-bold border border-slate-200 transition cursor-pointer"
               >
-                {students.map(s => (
-                  <option key={s.id} value={s.id}>{s.nombre} {s.apellidos} ({s.matricula})</option>
-                ))}
-              </select>
+                <ArrowLeft className="w-4 h-4" />
+                <span>Volver a Alumnos</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-600 font-medium">Seleccionar Alumno:</span>
+                <select
+                  value={selectedStudentForCredential.id}
+                  onChange={(e) => {
+                    const found = students.find(s => s.id === e.target.value);
+                    if (found) setSelectedStudentForCredential(found);
+                  }}
+                  className="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                >
+                  {students.map(s => (
+                    <option key={s.id} value={s.id}>{s.nombre} {s.apellidos} ({s.matricula})</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-center p-4">
+          <div className="flex flex-col items-center justify-center p-4 space-y-4">
             <CredentialCard student={selectedStudentForCredential} />
+            <button
+              onClick={() => onSelectModule('students')}
+              className="flex items-center gap-2 py-2.5 px-6 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-sm font-bold border border-slate-300 shadow-xs transition cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Cerrar y Regresar al Listado de Alumnos</span>
+            </button>
           </div>
         </div>
       )}
@@ -760,36 +894,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* MODULE 8: Gestión de Instructores */}
       {activeModule === 'teachers' && (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-            <h2 className="text-base font-bold text-slate-900">Directorio y Supervisión de Instructores</h2>
-            <p className="text-xs text-slate-500">Alta de docentes, carga horaria semanal y supervisión de avance de calificaciones.</p>
+        <div className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Directorio y Supervisión de Instructores</h2>
+              <p className="text-sm text-slate-600 font-medium mt-0.5">Alta de docentes, registro STPS, carga horaria semanal y talleres asignados.</p>
+            </div>
+            <button
+              onClick={() => setShowNewTeacherModal(true)}
+              className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Nuevo Docente / Instructor</span>
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {teachers.map((tc) => (
               <div key={tc.id} className="p-5 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between space-y-4 shadow-xs">
-                <div className="flex gap-3.5 items-start">
+                <div className="flex gap-4 items-start">
                   <img
                     src={tc.fotoUrl}
                     alt={tc.nombre}
-                    className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
+                    className="w-16 h-16 rounded-2xl object-cover border border-slate-200 shrink-0 bg-slate-100 shadow-xs"
                   />
                   <div className="min-w-0">
-                    <h3 className="text-sm font-bold text-slate-900 truncate">{tc.nombre}</h3>
-                    <p className="text-[11px] text-blue-600 font-medium truncate">{tc.titulo}</p>
-                    <p className="text-[10px] text-slate-400 font-mono mt-0.5">{tc.cedula}</p>
+                    <h3 className="text-base font-bold text-slate-900 truncate">{tc.nombre}</h3>
+                    <p className="text-xs text-blue-600 font-bold truncate mt-0.5">{tc.titulo}</p>
+                    <p className="text-xs text-slate-500 font-mono font-semibold mt-1">Cédula: {tc.cedula}</p>
+                    {tc.registroSTPS && (
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                        {tc.registroSTPS}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
-                  <div className="text-[11px]">
-                    <span className="text-slate-400 block text-[10px]">Especialidad:</span>
-                    <span className="text-slate-800">{tc.especialidad}</span>
+                <div className="space-y-2 text-sm text-slate-700 border-t border-slate-100 pt-3 font-medium">
+                  <div>
+                    <span className="text-xs text-slate-500 block">Especialidad Principal:</span>
+                    <span className="text-slate-900 font-semibold">{tc.especialidad}</span>
                   </div>
-                  <div className="flex justify-between pt-1">
-                    <span className="text-slate-400">Carga Horaria:</span>
-                    <strong className="text-emerald-600">{tc.horasSemanales} hrs/semana</strong>
+                  <div className="flex justify-between items-center pt-1">
+                    <span className="text-xs text-slate-500">Carga Horaria Semanal:</span>
+                    <strong className="text-emerald-700 font-mono text-sm">{tc.horasSemanales} hrs/sem</strong>
+                  </div>
+                  <div className="flex justify-between items-center text-xs text-slate-500">
+                    <span>Contacto:</span>
+                    <span className="text-slate-700 font-mono">{tc.telefono}</span>
                   </div>
                 </div>
               </div>
@@ -1031,6 +1183,267 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="button"
                   onClick={() => setShowNewAnnounceModal(false)}
                   className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Nuevo Docente / Instructor */}
+      {showNewTeacherModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-blue-50 text-blue-700">
+                  <UserCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Alta de Nuevo Docente / Instructor</h3>
+                  <p className="text-xs text-slate-500 font-medium">Registro con acreditación técnica y registro STPS</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowNewTeacherModal(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTeacher} className="space-y-4 text-sm">
+              <div>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">Nombre Completo del Instructor *</label>
+                <input
+                  type="text"
+                  required
+                  value={newTeacherData.nombre}
+                  onChange={(e) => setNewTeacherData({ ...newTeacherData, nombre: e.target.value })}
+                  className="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-blue-500 text-sm"
+                  placeholder="Ej. Ing. Roberto Mendoza Salazar"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Título / Grado Académico</label>
+                  <input
+                    type="text"
+                    value={newTeacherData.titulo}
+                    onChange={(e) => setNewTeacherData({ ...newTeacherData, titulo: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="Ingeniero Mecánico / Técnico"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Cédula Profesional</label>
+                  <input
+                    type="text"
+                    value={newTeacherData.cedula}
+                    onChange={(e) => setNewTeacherData({ ...newTeacherData, cedula: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:border-blue-500"
+                    placeholder="CED-PROF-892144"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Registro Agente STPS</label>
+                  <input
+                    type="text"
+                    value={newTeacherData.registroSTPS}
+                    onChange={(e) => setNewTeacherData({ ...newTeacherData, registroSTPS: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:border-blue-500"
+                    placeholder="STPS-CAP-2026-004"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Carga Horaria Semanal</label>
+                  <input
+                    type="number"
+                    value={newTeacherData.horasSemanales}
+                    onChange={(e) => setNewTeacherData({ ...newTeacherData, horasSemanales: Number(e.target.value) })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:border-blue-500"
+                    placeholder="24"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">Especialidad Técnica Principal</label>
+                <input
+                  type="text"
+                  value={newTeacherData.especialidad}
+                  onChange={(e) => setNewTeacherData({ ...newTeacherData, especialidad: e.target.value })}
+                  className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                  placeholder="Aire Acondicionado Inverter, Soldadura TIG, etc."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Teléfono Móvil</label>
+                  <input
+                    type="text"
+                    value={newTeacherData.telefono}
+                    onChange={(e) => setNewTeacherData({ ...newTeacherData, telefono: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:border-blue-500"
+                    placeholder="923-112-4455"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Correo Electrónico</label>
+                  <input
+                    type="email"
+                    value={newTeacherData.email}
+                    onChange={(e) => setNewTeacherData({ ...newTeacherData, email: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="instructor@crece.edu.mx"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
+                >
+                  Registrar y Guardar Docente
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowNewTeacherModal(false)}
+                  className="py-3 px-5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm font-semibold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Nuevo Taller de Oficio */}
+      {showNewWorkshopModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Apertura de Nuevo Taller de Oficio</h3>
+                  <p className="text-xs text-slate-500 font-medium">Configuración académica, cupos y mensualidad</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowNewWorkshopModal(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateWorkshop} className="space-y-4 text-sm">
+              <div>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">Nombre del Taller / Curso *</label>
+                <input
+                  type="text"
+                  required
+                  value={newWorkshopData.nombre}
+                  onChange={(e) => setNewWorkshopData({ ...newWorkshopData, nombre: e.target.value })}
+                  className="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-indigo-500 text-sm"
+                  placeholder="Ej. Soldadura Industrial SMAW y TIG de Alta Presión"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Categoría Técnica</label>
+                  <select
+                    value={newWorkshopData.categoria}
+                    onChange={(e) => setNewWorkshopData({ ...newWorkshopData, categoria: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="Refrigeración y Climatización">Refrigeración y Climatización</option>
+                    <option value="Metalmecánica y Soldadura">Metalmecánica y Soldadura</option>
+                    <option value="Electricidad y Automatización">Electricidad y Automatización</option>
+                    <option value="Mecánica Automotriz y Diésel">Mecánica Automotriz y Diésel</option>
+                    <option value="Construcción e Instalaciones">Construcción e Instalaciones</option>
+                    <option value="Belleza y Estilismo Profesional">Belleza y Estilismo</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Aula / Nave de Práctica</label>
+                  <input
+                    type="text"
+                    value={newWorkshopData.aula}
+                    onChange={(e) => setNewWorkshopData({ ...newWorkshopData, aula: e.target.value })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-500"
+                    placeholder="Nave Taller 2 - Estación 3"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">Instructor Titular Asignado</label>
+                <select
+                  value={newWorkshopData.profesorId}
+                  onChange={(e) => setNewWorkshopData({ ...newWorkshopData, profesorId: e.target.value })}
+                  className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-500 font-semibold"
+                >
+                  {teachers.map(t => (
+                    <option key={t.id} value={t.id}>{t.nombre} ({t.especialidad})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Cupo Máx.</label>
+                  <input
+                    type="number"
+                    value={newWorkshopData.cupoMaximo}
+                    onChange={(e) => setNewWorkshopData({ ...newWorkshopData, cupoMaximo: Number(e.target.value) })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Mensualidad ($)</label>
+                  <input
+                    type="number"
+                    value={newWorkshopData.costoMensualidad}
+                    onChange={(e) => setNewWorkshopData({ ...newWorkshopData, costoMensualidad: Number(e.target.value) })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Duración (Hrs)</label>
+                  <input
+                    type="number"
+                    value={newWorkshopData.duracionHoras}
+                    onChange={(e) => setNewWorkshopData({ ...newWorkshopData, duracionHoras: Number(e.target.value) })}
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
+                >
+                  Registrar y Abrir Taller
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowNewWorkshopModal(false)}
+                  className="py-3 px-5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm font-semibold cursor-pointer"
                 >
                   Cancelar
                 </button>

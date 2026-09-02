@@ -574,49 +574,58 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
       {/* MODAL: Nueva Práctica */}
       {showNewTaskModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
-            <h3 className="text-base font-bold text-slate-900 mb-4">Nueva Práctica de Taller</h3>
-            <form onSubmit={handleCreateTask} className="space-y-3 text-xs">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900">Nueva Práctica de Taller</h3>
+              <button
+                onClick={() => setShowNewTaskModal(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTask} className="space-y-4 text-sm">
               <div>
-                <label className="block text-slate-600 font-semibold mb-1">Título de la Práctica:</label>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">Título de la Práctica *</label>
                 <input
                   type="text"
                   required
                   value={newTaskData.titulo}
                   onChange={(e) => setNewTaskData({ ...newTaskData, titulo: e.target.value })}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                  placeholder="Ej. Práctica 6: Prueba de Presión con Nitrógeno"
+                  className="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-blue-500 text-sm"
+                  placeholder="Ej. Práctica 6: Prueba de Presión con Nitrógeno y Detección de Fugas"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-600 font-semibold mb-1">Descripción y Objetivos:</label>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">Descripción y Criterios de Evaluación</label>
                 <textarea
                   rows={3}
                   value={newTaskData.descripcion}
                   onChange={(e) => setNewTaskData({ ...newTaskData, descripcion: e.target.value })}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                  placeholder="Detalles de la práctica en taller..."
+                  className="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500 text-sm leading-relaxed"
+                  placeholder="Instrucciones paso a paso, medidas de seguridad y evidencias solicitadas..."
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Fecha Límite:</label>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Fecha Límite de Entrega</label>
                   <input
                     type="date"
                     value={newTaskData.fechaEntrega}
                     onChange={(e) => setNewTaskData({ ...newTaskData, fechaEntrega: e.target.value })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900"
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-sm focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Ponderación (%):</label>
+                  <label className="block text-slate-700 font-bold mb-1 text-xs">Ponderación en Nota (%)</label>
                   <input
                     type="number"
                     value={newTaskData.valorPorcentaje}
                     onChange={(e) => setNewTaskData({ ...newTaskData, valorPorcentaje: Number(e.target.value) })}
-                    className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono"
+                    className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-sm focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -624,14 +633,14 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
               <div className="flex gap-3 pt-4 border-t border-slate-200">
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
                 >
                   Asignar a Alumnos
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowNewTaskModal(false)}
-                  className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
+                  className="py-3 px-5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm font-semibold cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -644,15 +653,24 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
       {/* MODAL: Evaluar Evidencia */}
       {selectedSub && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
-            <h3 className="text-base font-bold text-slate-900 mb-2">Evaluar Evidencia de Alumno</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              {selectedSub.estudianteNombre} • {selectedSub.actividadTitulo}
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl text-slate-800">
+            <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900">Evaluar Evidencia de Alumno</h3>
+              <button
+                onClick={() => setSelectedSub(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <p className="text-sm text-slate-600 mb-4 font-medium">
+              <strong className="text-slate-900">{selectedSub.estudianteNombre}</strong> • {selectedSub.actividadTitulo}
             </p>
 
-            <form onSubmit={handleSaveSubGrade} className="space-y-3 text-xs">
+            <form onSubmit={handleSaveSubGrade} className="space-y-4 text-sm">
               <div>
-                <label className="block text-slate-600 font-semibold mb-1">Calificación (0 - 10):</label>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">Calificación Obtenida (Escala 0.0 - 10.0) *</label>
                 <input
                   type="number"
                   step="0.1"
@@ -661,32 +679,32 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
                   required
                   value={gradeInput}
                   onChange={(e) => setGradeInput(e.target.value)}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono focus:outline-none focus:border-blue-500"
+                  className="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-black text-lg focus:outline-none focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-600 font-semibold mb-1">Retroalimentación para el Alumno:</label>
+                <label className="block text-slate-700 font-bold mb-1 text-xs">Retroalimentación / Observaciones Técnicas</label>
                 <textarea
                   rows={3}
                   value={feedbackInput}
                   onChange={(e) => setFeedbackInput(e.target.value)}
-                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500"
-                  placeholder="Ej. Excelente trabajo en la comprobación de estanqueidad..."
+                  className="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500 text-sm leading-relaxed"
+                  placeholder="Ej. Excelente comprobación de estanqueidad; recuerda sellar las conexiones con cinta teflón..."
                 />
               </div>
 
               <div className="flex gap-3 pt-4 border-t border-slate-200">
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
                 >
                   Guardar Calificación
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedSub(null)}
-                  className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
+                  className="py-3 px-5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm font-semibold cursor-pointer"
                 >
                   Cancelar
                 </button>

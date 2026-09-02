@@ -80,6 +80,10 @@ export default function App() {
     setWorkshops(prev => [...prev, ws]);
   };
 
+  const handleAddTeacher = (teacher: Teacher) => {
+    setTeachers(prev => [teacher, ...prev]);
+  };
+
   const handleAddPayment = (payment: PaymentRecord) => {
     setPayments(prev => [payment, ...prev]);
   };
@@ -205,6 +209,7 @@ export default function App() {
               workshops={workshops}
               onAddWorkshop={handleAddWorkshop}
               teachers={teachers}
+              onAddTeacher={handleAddTeacher}
               payments={payments}
               onAddPayment={handleAddPayment}
               announcements={announcements}
