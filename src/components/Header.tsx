@@ -78,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
               </h1>
               <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
                 {getRoleIconBadge(currentRole)}
-                <span>{currentRoleData.name}</span>
+                <span>{currentRoleData?.name || ''}</span>
               </span>
             </div>
             <p className="text-[11px] text-slate-400 leading-none mt-1 hidden sm:block">
@@ -104,10 +104,10 @@ export const Header: React.FC<HeaderProps> = ({
         {/* User Info / Role (Medium screens) */}
         <div className="hidden lg:flex flex-col text-right px-1">
           <span className="text-xs font-bold text-slate-800 truncate max-w-[150px]">
-            {currentRoleData.defaultUserName}
+            {currentRoleData?.defaultUserName || ''}
           </span>
           <span className="text-[10px] text-slate-400 truncate max-w-[150px]">
-            {currentRoleData.defaultUserTitle}
+            {currentRoleData?.defaultUserTitle || ''}
           </span>
         </div>
 

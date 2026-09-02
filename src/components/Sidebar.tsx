@@ -7,6 +7,7 @@ import {
   StpsModule,
   RoleInfo
 } from '../types';
+import { ROLES_DATA } from '../data/mockData';
 import { 
   X, 
   Users, 
@@ -32,7 +33,7 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   currentRole: UserRole;
-  roleInfo: RoleInfo;
+  roleInfo?: RoleInfo;
   activeAdminModule: AdminModule;
   onSelectAdminModule: (mod: AdminModule) => void;
   activeTeacherModule: TeacherModule;
@@ -41,10 +42,10 @@ interface SidebarProps {
   onSelectStudentModule: (mod: StudentModule) => void;
   activeStpsModule: StpsModule;
   onSelectStpsModule: (mod: StpsModule) => void;
-  onSelectRole: (role: UserRole) => void;
+  onSelectRole?: (role: UserRole) => void;
   onLogout: () => void;
-  onOpenInstallModal: () => void;
-  rolesList: RoleInfo[];
+  onOpenInstallModal?: () => void;
+  rolesList?: RoleInfo[];
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -63,9 +64,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectRole,
   onLogout,
   onOpenInstallModal,
-  rolesList
+  rolesList = ROLES_DATA
 }) => {
   if (!isOpen) return null;
+
+  const currentRoleData = roleInfo || ROLES_DATA.find(r => r.id === currentRole) || ROLES_DATA[0];
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -85,7 +88,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-sm text-slate-900 leading-tight">Menú del Sistema</h3>
-              <p className="text-[11px] text-blue-600 font-semibold">{roleInfo.name}</p>
+              <p className="text-[11px] text-blue-600 font-semibold">{currentRoleData?.name || 'Usuario'}</p>
             </div>
           </div>
 
@@ -370,11 +373,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               Cambiar a Otro Rol
             </div>
             <div className="space-y-1">
-              {rolesList.map((r) => (
+              {(rolesList || ROLES_DATA).map((r) => (
                 <button
                   key={r.id}
                   onClick={() => {
-                    onSelectRole(r.id);
+                    if (onSelectRole) onSelectRole(r.id);
                     onClose();
                   }}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition text-left cursor-pointer ${
@@ -396,7 +399,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Footer in Sidebar */}
         <div className="p-4 border-t border-slate-200 space-y-2 bg-slate-50">
           <button
-            onClick={() => { onOpenInstallModal(); onClose(); }}
+            onClick={() => { 
+              if (onOpenInstallModal) onOpenInstallModal(); 
+              onClose(); 
+            }}
             className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition cursor-pointer"
           >
             <Smartphone className="w-4 h-4" />

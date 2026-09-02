@@ -94,15 +94,15 @@ export const HomeRoleSelector: React.FC<HomeRoleSelectorProps> = ({
 
         {/* Roles Grid: ONLY Logo/Icon and Role Name (No Descriptions as strictly requested) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 w-full max-w-5xl">
-          {roles.map((role) => (
+          {(roles || ROLES_DATA).map((role) => (
             <div
-              key={role.id}
-              onClick={() => onSelectRole(role.id)}
+              key={role?.id || Math.random()}
+              onClick={() => role?.id && onSelectRole(role.id)}
               className="group bg-white border border-slate-200 p-7 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-200 cursor-pointer flex flex-col items-center text-center"
             >
-              {getRoleIconBadge(role.id)}
+              {role?.id && getRoleIconBadge(role.id)}
               <span className="text-base sm:text-lg font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
-                {role.name}
+                {role?.name || ''}
               </span>
             </div>
           ))}

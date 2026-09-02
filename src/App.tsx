@@ -162,6 +162,11 @@ export default function App() {
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           currentRole={currentRole}
+          onSelectRole={(role) => {
+            setCurrentRole(role);
+            setSidebarOpen(false);
+          }}
+          onOpenInstallModal={() => setShowPwaModal(true)}
           activeAdminModule={activeAdminModule}
           onSelectAdminModule={(mod) => {
             setActiveAdminModule(mod);
