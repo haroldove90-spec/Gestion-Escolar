@@ -73,7 +73,7 @@ export const HomeRoleSelector: React.FC<HomeRoleSelectorProps> = ({
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
         >
           <Smartphone className="w-4 h-4" />
-          <span>Instalar Aire Acondicionado</span>
+          <span>Instala Gestión Escolar</span>
         </button>
       </div>
 
@@ -112,7 +112,7 @@ export const HomeRoleSelector: React.FC<HomeRoleSelectorProps> = ({
       {/* Bottom Footer info */}
       <div className="w-full max-w-5xl mx-auto text-center border-t border-slate-200 pt-4">
         <p className="text-xs text-slate-400">
-          CRECE Plantel Agua Dulce • Formación y Certificación Laboral STPS / CONOCER • Aplicación PWA Aire Acondicionado
+          CRECE Plantel Agua Dulce • Formación y Certificación Laboral STPS / CONOCER • Aplicación PWA Gestión Escolar
         </p>
       </div>
     </div>

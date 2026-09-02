@@ -406,7 +406,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition cursor-pointer"
           >
             <Smartphone className="w-4 h-4" />
-            <span>Instalar PWA Aire Acondicionado</span>
+            <span>Instala Gestión Escolar</span>
           </button>
 
           <button

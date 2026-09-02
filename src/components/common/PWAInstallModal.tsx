@@ -47,7 +47,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-900 tracking-tight">Instalar Aplicación Móvil</h3>
-            <p className="text-xs text-blue-600 font-semibold">App: Aire Acondicionado • CRECE</p>
+            <p className="text-xs text-blue-600 font-semibold">App: Gestión Escolar • CRECE</p>
           </div>
         </div>
 
@@ -66,7 +66,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
               className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition cursor-pointer"
             >
               <Download className="w-4 h-4" />
-              Instalar &quot;Aire Acondicionado&quot; Ahora
+              Instalar &quot;Gestión Escolar&quot; Ahora
             </button>
           </div>
         ) : isIOS ? (
@@ -82,7 +82,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
               </div>
               <div className="flex items-center gap-2 text-emerald-600 font-medium">
                 <CheckCircle className="w-4 h-4 shrink-0" />
-                <span>3. Confirma el nombre <strong>Aire Acondicionado</strong></span>
+                <span>3. Confirma el nombre <strong>Gestión Escolar</strong></span>
               </div>
             </div>
             <button
@@ -105,7 +105,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
               </div>
               <div className="flex items-start gap-2">
                 <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">3</div>
-                <span>Aparecerá el ícono <strong>&quot;Aire Acondicionado&quot;</strong> en tu celular.</span>
+                <span>Aparecerá el ícono <strong>&quot;Gestión Escolar&quot;</strong> en tu celular.</span>
               </div>
             </div>
 

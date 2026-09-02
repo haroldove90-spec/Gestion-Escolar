@@ -93,11 +93,11 @@ export const Header: React.FC<HeaderProps> = ({
         {/* PWA Install Button */}
         <button
           onClick={handleInstallClick}
-          title="Instalar App Aire Acondicionado"
+          title="Instalar App Gestión Escolar"
           className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
         >
           <Smartphone className="w-4 h-4 shrink-0" />
-          <span className="hidden sm:inline">Instalar Aire Acondicionado</span>
+          <span className="hidden sm:inline">Instala Gestión Escolar</span>
           <span className="sm:hidden">Instalar</span>
         </button>
 
