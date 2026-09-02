@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   UserRole, 
   AdminModule, 
@@ -40,32 +40,155 @@ import { StpsDashboard } from './components/stps/StpsDashboard';
 import { PWAInstallModal } from './components/common/PWAInstallModal';
 import { usePWAInstall } from './hooks/usePWAInstall';
 
+// Safe LocalStorage helpers
+function getStoredItem<T>(key: string, defaultValue: T): T {
+  try {
+    const item = localStorage.getItem(key);
+    if (item !== null && item !== 'undefined') {
+      return JSON.parse(item);
+    }
+  } catch (e) {
+    console.warn(`Error reading ${key} from localStorage`, e);
+  }
+  return defaultValue;
+}
+
+function setStoredItem<T>(key: string, value: T): void {
+  try {
+    if (value === null || value === undefined) {
+      localStorage.removeItem(key);
+    } else {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+  } catch (e) {
+    console.warn(`Error saving ${key} to localStorage`, e);
+  }
+}
+
 export default function App() {
-  // Navigation & Role State
-  const [currentRole, setCurrentRole] = useState<UserRole | null>(null);
+  // Navigation & Role State (Persisted in localStorage)
+  const [currentRole, setCurrentRole] = useState<UserRole | null>(() => 
+    getStoredItem<UserRole | null>('crece_current_role', null)
+  );
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showPwaModal, setShowPwaModal] = useState(false);
 
-  // Active Modules for each role
-  const [activeAdminModule, setActiveAdminModule] = useState<AdminModule>('journey');
-  const [activeTeacherModule, setActiveTeacherModule] = useState<TeacherModule>('attendance');
-  const [activeStudentModule, setActiveStudentModule] = useState<StudentModule>('profile');
-  const [activeStpsModule, setActiveStpsModule] = useState<StpsModule>('dc3');
+  // Active Modules for each role (Persisted)
+  const [activeAdminModule, setActiveAdminModule] = useState<AdminModule>(() =>
+    getStoredItem<AdminModule>('crece_admin_module', 'journey')
+  );
+  const [activeTeacherModule, setActiveTeacherModule] = useState<TeacherModule>(() =>
+    getStoredItem<TeacherModule>('crece_teacher_module', 'attendance')
+  );
+  const [activeStudentModule, setActiveStudentModule] = useState<StudentModule>(() =>
+    getStoredItem<StudentModule>('crece_student_module', 'profile')
+  );
+  const [activeStpsModule, setActiveStpsModule] = useState<StpsModule>(() =>
+    getStoredItem<StpsModule>('crece_stps_module', 'dc3')
+  );
 
-  // Application Data State
-  const [students, setStudents] = useState<Student[]>(INITIAL_STUDENTS);
-  const [workshops, setWorkshops] = useState<Workshop[]>(INITIAL_WORKSHOPS);
-  const [teachers, setTeachers] = useState<Teacher[]>(INITIAL_TEACHERS);
-  const [payments, setPayments] = useState<PaymentRecord[]>(INITIAL_PAYMENTS);
-  const [announcements, setAnnouncements] = useState<Announcement[]>(INITIAL_ANNOUNCEMENTS);
-  const [attendance, setAttendance] = useState<AttendanceRecord>(INITIAL_ATTENDANCE);
-  const [grades, setGrades] = useState<GradeItem[]>(INITIAL_GRADES);
-  const [tasks, setTasks] = useState<TaskActivity[]>(INITIAL_TASKS);
-  const [submissions, setSubmissions] = useState<StudentSubmission[]>(INITIAL_SUBMISSIONS);
-  const [dc3Records, setDc3Records] = useState<DC3Record[]>(INITIAL_DC3_RECORDS);
+  // Application Data State (Persisted across refreshes)
+  const [students, setStudents] = useState<Student[]>(() =>
+    getStoredItem<Student[]>('crece_students', INITIAL_STUDENTS)
+  );
+  const [workshops, setWorkshops] = useState<Workshop[]>(() =>
+    getStoredItem<Workshop[]>('crece_workshops', INITIAL_WORKSHOPS)
+  );
+  const [teachers, setTeachers] = useState<Teacher[]>(() =>
+    getStoredItem<Teacher[]>('crece_teachers', INITIAL_TEACHERS)
+  );
+  const [payments, setPayments] = useState<PaymentRecord[]>(() =>
+    getStoredItem<PaymentRecord[]>('crece_payments', INITIAL_PAYMENTS)
+  );
+  const [announcements, setAnnouncements] = useState<Announcement[]>(() =>
+    getStoredItem<Announcement[]>('crece_announcements', INITIAL_ANNOUNCEMENTS)
+  );
+  const [attendance, setAttendance] = useState<AttendanceRecord>(() =>
+    getStoredItem<AttendanceRecord>('crece_attendance', INITIAL_ATTENDANCE)
+  );
+  const [grades, setGrades] = useState<GradeItem[]>(() =>
+    getStoredItem<GradeItem[]>('crece_grades', INITIAL_GRADES)
+  );
+  const [tasks, setTasks] = useState<TaskActivity[]>(() =>
+    getStoredItem<TaskActivity[]>('crece_tasks', INITIAL_TASKS)
+  );
+  const [submissions, setSubmissions] = useState<StudentSubmission[]>(() =>
+    getStoredItem<StudentSubmission[]>('crece_submissions', INITIAL_SUBMISSIONS)
+  );
+  const [dc3Records, setDc3Records] = useState<DC3Record[]>(() =>
+    getStoredItem<DC3Record[]>('crece_dc3_records', INITIAL_DC3_RECORDS)
+  );
+
+  // Sync to LocalStorage
+  useEffect(() => {
+    setStoredItem('crece_current_role', currentRole);
+  }, [currentRole]);
+
+  useEffect(() => {
+    setStoredItem('crece_admin_module', activeAdminModule);
+  }, [activeAdminModule]);
+
+  useEffect(() => {
+    setStoredItem('crece_teacher_module', activeTeacherModule);
+  }, [activeTeacherModule]);
+
+  useEffect(() => {
+    setStoredItem('crece_student_module', activeStudentModule);
+  }, [activeStudentModule]);
+
+  useEffect(() => {
+    setStoredItem('crece_stps_module', activeStpsModule);
+  }, [activeStpsModule]);
+
+  useEffect(() => {
+    setStoredItem('crece_students', students);
+  }, [students]);
+
+  useEffect(() => {
+    setStoredItem('crece_workshops', workshops);
+  }, [workshops]);
+
+  useEffect(() => {
+    setStoredItem('crece_teachers', teachers);
+  }, [teachers]);
+
+  useEffect(() => {
+    setStoredItem('crece_payments', payments);
+  }, [payments]);
+
+  useEffect(() => {
+    setStoredItem('crece_announcements', announcements);
+  }, [announcements]);
+
+  useEffect(() => {
+    setStoredItem('crece_attendance', attendance);
+  }, [attendance]);
+
+  useEffect(() => {
+    setStoredItem('crece_grades', grades);
+  }, [grades]);
+
+  useEffect(() => {
+    setStoredItem('crece_tasks', tasks);
+  }, [tasks]);
+
+  useEffect(() => {
+    setStoredItem('crece_submissions', submissions);
+  }, [submissions]);
+
+  useEffect(() => {
+    setStoredItem('crece_dc3_records', dc3Records);
+  }, [dc3Records]);
 
   // PWA Install Hook
   const { isInstallable, installApp } = usePWAInstall();
+
+  // Handle Logout
+  const handleLogout = () => {
+    setCurrentRole(null);
+    setSidebarOpen(false);
+    setStoredItem('crece_current_role', null);
+  };
 
   // Handlers for Data Mutations
   const handleAddStudent = (newStudent: Student) => {
@@ -180,10 +303,7 @@ export default function App() {
       <Header
         currentRole={currentRole}
         onToggleSidebar={() => setSidebarOpen(prev => !prev)}
-        onLogout={() => {
-          setCurrentRole(null);
-          setSidebarOpen(false);
-        }}
+        onLogout={handleLogout}
         onInstallPWA={handleTriggerInstall}
         isInstallable={isInstallable}
       />
@@ -219,10 +339,7 @@ export default function App() {
             setActiveStpsModule(mod);
             setSidebarOpen(false);
           }}
-          onLogout={() => {
-            setCurrentRole(null);
-            setSidebarOpen(false);
-          }}
+          onLogout={handleLogout}
         />
 
         {/* Main Content Viewport */}
@@ -309,10 +426,7 @@ export default function App() {
         onSelectStudentModule={setActiveStudentModule}
         activeStpsModule={activeStpsModule}
         onSelectStpsModule={setActiveStpsModule}
-        onLogout={() => {
-          setCurrentRole(null);
-          setSidebarOpen(false);
-        }}
+        onLogout={handleLogout}
       />
 
       {/* PWA Installation Instructions Modal */}
