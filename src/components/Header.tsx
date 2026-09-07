@@ -7,7 +7,8 @@ import {
   ShieldCheck,
   GraduationCap,
   UserCheck,
-  Award
+  Award,
+  Globe
 } from 'lucide-react';
 import { UserRole, RoleInfo } from '../types';
 import { ROLES_DATA } from '../data/mockData';
@@ -17,6 +18,7 @@ interface HeaderProps {
   roleInfo?: RoleInfo;
   onToggleSidebar: () => void;
   onLogout: () => void;
+  onViewLanding?: () => void;
   onOpenInstallModal?: () => void;
   onInstallPWA?: () => void;
   isInstallable?: boolean;
@@ -29,6 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
   roleInfo,
   onToggleSidebar,
   onLogout,
+  onViewLanding,
   onOpenInstallModal,
   onInstallPWA,
   isInstallable
@@ -90,6 +93,18 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right: Sleek PWA Install button + Prominent Logout */}
       <div className="flex items-center gap-2 sm:gap-3">
+        {/* Public Landing Page Link Button */}
+        {onViewLanding && (
+          <button
+            onClick={onViewLanding}
+            title="Ver Landing Page Oficial en vivo"
+            className="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+          >
+            <Globe className="w-4 h-4 text-blue-600 shrink-0" />
+            <span className="hidden md:inline">Landing Page</span>
+          </button>
+        )}
+
         {/* PWA Install Button */}
         <button
           onClick={handleInstallClick}

@@ -51,6 +51,8 @@ import { TeacherDetailModal } from '../common/TeacherDetailModal';
 import { TeacherEditModal } from '../common/TeacherEditModal';
 import { WorkshopDetailModal } from '../common/WorkshopDetailModal';
 import { WorkshopEditModal } from '../common/WorkshopEditModal';
+import { LandingPageEditor } from './LandingPageEditor';
+import { LandingPageConfig } from '../../types';
 
 interface AdminDashboardProps {
   activeModule: AdminModule;
@@ -73,6 +75,9 @@ interface AdminDashboardProps {
   onAddPayment: (payment: PaymentRecord) => void;
   announcements: Announcement[];
   onAddAnnouncement: (ann: Announcement) => void;
+  landingConfig?: LandingPageConfig;
+  onSaveLandingConfig?: (config: LandingPageConfig) => void;
+  onPreviewLanding?: () => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -95,7 +100,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   payments,
   onAddPayment,
   announcements,
-  onAddAnnouncement
+  onAddAnnouncement,
+  landingConfig,
+  onSaveLandingConfig,
+  onPreviewLanding
 }) => {
   // Local state for search & filters
   const [searchTerm, setSearchTerm] = useState('');
@@ -1160,6 +1168,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             ))}
           </div>
         </div>
+      )}
+
+      {/* MODULE: Landing Page Admin Editor */}
+      {activeModule === 'landing' && landingConfig && onSaveLandingConfig && (
+        <LandingPageEditor
+          initialConfig={landingConfig}
+          onSaveConfig={onSaveLandingConfig}
+          onPreviewLanding={onPreviewLanding || (() => {})}
+        />
       )}
 
       {/* MODAL: Nuevo Alumno (Con campo de fotografía) */}

@@ -26,7 +26,9 @@ import {
   LogOut,
   Workflow,
   Smartphone,
-  Wind
+  Wind,
+  Sliders,
+  Globe
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -43,6 +45,7 @@ interface SidebarProps {
   activeStpsModule: StpsModule;
   onSelectStpsModule: (mod: StpsModule) => void;
   onSelectRole?: (role: UserRole) => void;
+  onViewLanding?: () => void;
   onLogout: () => void;
   onOpenInstallModal?: () => void;
   rolesList?: RoleInfo[];
@@ -62,6 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeStpsModule,
   onSelectStpsModule,
   onSelectRole,
+  onViewLanding,
   onLogout,
   onOpenInstallModal,
   rolesList = ROLES_DATA
@@ -204,6 +208,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   >
                     <GraduationCap className="w-5 h-5 text-blue-600 shrink-0" />
                     <span>Gestión de Instructores</span>
+                  </button>
+
+                  <button
+                    onClick={() => { onSelectAdminModule('landing'); onClose(); }}
+                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition text-left cursor-pointer ${
+                      activeAdminModule === 'landing'
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200 font-bold shadow-xs'
+                        : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                    }`}
+                  >
+                    <Sliders className="w-5 h-5 text-indigo-600 shrink-0" />
+                    <div>
+                      <span className="font-bold">Administrar Landing Page</span>
+                      <span className="block text-[11px] text-slate-500 font-normal">Editor de contenidos web</span>
+                    </div>
                   </button>
                 </>
               )}
@@ -369,6 +388,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Footer in Sidebar */}
         <div className="p-4 border-t border-slate-200 space-y-2 bg-slate-50">
+          {onViewLanding && (
+            <button
+              onClick={() => {
+                onViewLanding();
+                onClose();
+              }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 text-xs font-bold transition shadow-xs cursor-pointer"
+            >
+              <Globe className="w-4 h-4 text-blue-600" />
+              <span>Ver Landing Page Pública</span>
+            </button>
+          )}
+
           <button
             onClick={() => { 
               if (onOpenInstallModal) onOpenInstallModal(); 

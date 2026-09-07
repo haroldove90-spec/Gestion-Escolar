@@ -14,7 +14,8 @@ import {
   GradeItem,
   TaskActivity,
   StudentSubmission,
-  DC3Record
+  DC3Record,
+  LandingPageConfig
 } from './types';
 import { 
   INITIAL_STUDENTS, 
@@ -29,6 +30,7 @@ import {
   INITIAL_DC3_RECORDS, 
   CONOCER_STANDARDS 
 } from './data/mockData';
+import { DEFAULT_LANDING_CONFIG } from './data/defaultLandingConfig';
 import { HomeRoleSelector } from './components/HomeRoleSelector';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
@@ -37,6 +39,7 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { StudentDashboard } from './components/student/StudentDashboard';
 import { StpsDashboard } from './components/stps/StpsDashboard';
+import { LandingPageView } from './components/landing/LandingPageView';
 import { PWAInstallModal } from './components/common/PWAInstallModal';
 import { usePWAInstall } from './hooks/usePWAInstall';
 
@@ -65,6 +68,20 @@ function setStoredItem<T>(key: string, value: T): void {
   }
 }
 
+// Check if landing view is requested via URL parameter, hash, or path
+function checkIsLandingUrl(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('view') === 'landing') return true;
+    if (window.location.hash.toLowerCase() === '#landing' || window.location.hash.toLowerCase().startsWith('#landing')) return true;
+    if (window.location.pathname.endsWith('/landing')) return true;
+  } catch (e) {
+    // fallback
+  }
+  return false;
+}
+
 export default function App() {
   // Navigation & Role State (Persisted in localStorage)
   const [currentRole, setCurrentRole] = useState<UserRole | null>(() => 
@@ -72,6 +89,14 @@ export default function App() {
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showPwaModal, setShowPwaModal] = useState(false);
+
+  // Landing Page Configuration State (Persisted)
+  const [landingConfig, setLandingConfig] = useState<LandingPageConfig>(() =>
+    getStoredItem<LandingPageConfig>('crece_landing_config', DEFAULT_LANDING_CONFIG)
+  );
+
+  // Independent Landing Page View Mode (URL query ?view=landing, #landing, or direct state)
+  const [isViewingLanding, setIsViewingLanding] = useState<boolean>(() => checkIsLandingUrl());
 
   // Active Modules for each role (Persisted)
   const [activeAdminModule, setActiveAdminModule] = useState<AdminModule>(() =>
@@ -180,6 +205,52 @@ export default function App() {
     setStoredItem('crece_dc3_records', dc3Records);
   }, [dc3Records]);
 
+  useEffect(() => {
+    setStoredItem('crece_landing_config', landingConfig);
+  }, [landingConfig]);
+
+  // Sync with browser URL changes (popstate / hashchange)
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setIsViewingLanding(checkIsLandingUrl());
+    };
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+    };
+  }, []);
+
+  const handleOpenLandingView = () => {
+    setIsViewingLanding(true);
+    try {
+      if (window.history && window.history.pushState) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('view', 'landing');
+        window.history.pushState({}, '', url.toString());
+      }
+    } catch (e) {}
+  };
+
+  const handleCloseLandingView = () => {
+    setIsViewingLanding(false);
+    try {
+      if (window.history && window.history.pushState) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('view');
+        if (url.hash.startsWith('#landing')) url.hash = '';
+        window.history.pushState({}, '', url.pathname + (url.search ? url.search : ''));
+      }
+    } catch (e) {}
+  };
+
+  const handleOpenAdminLandingEditor = () => {
+    handleCloseLandingView();
+    setCurrentRole('admin');
+    setActiveAdminModule('landing');
+  };
+
   // PWA Install Hook
   const { isInstallable, installApp } = usePWAInstall();
 
@@ -279,12 +350,35 @@ export default function App() {
     }
   };
 
-  // If no role is selected, show the Home landing screen (Only Logo & Role Buttons)
+  // Standalone Public Landing Page View (accessible via ?view=landing, #landing, or button)
+  if (isViewingLanding) {
+    return (
+      <main className="min-h-screen bg-slate-900 text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
+        <LandingPageView
+          config={landingConfig}
+          workshops={workshops}
+          onOpenPortal={handleCloseLandingView}
+          onSelectRole={(role) => {
+            handleCloseLandingView();
+            setCurrentRole(role);
+          }}
+          onOpenAdminEditor={handleOpenAdminLandingEditor}
+        />
+      </main>
+    );
+  }
+
+  // If no role is selected, show the Home landing screen (Only Logo, Role Buttons & Landing Page Administration)
   if (!currentRole) {
     return (
       <main className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col justify-between selection:bg-blue-600 selection:text-white font-sans">
         <HomeRoleSelector
           onSelectRole={(role) => setCurrentRole(role)}
+          onAdministerLanding={() => {
+            setCurrentRole('admin');
+            setActiveAdminModule('landing');
+          }}
+          onViewLanding={handleOpenLandingView}
           onInstallPWA={handleTriggerInstall}
           isInstallable={isInstallable}
         />
@@ -304,6 +398,7 @@ export default function App() {
         currentRole={currentRole}
         onToggleSidebar={() => setSidebarOpen(prev => !prev)}
         onLogout={handleLogout}
+        onViewLanding={handleOpenLandingView}
         onInstallPWA={handleTriggerInstall}
         isInstallable={isInstallable}
       />
@@ -318,6 +413,7 @@ export default function App() {
             setCurrentRole(role);
             setSidebarOpen(false);
           }}
+          onViewLanding={handleOpenLandingView}
           onOpenInstallModal={() => setShowPwaModal(true)}
           activeAdminModule={activeAdminModule}
           onSelectAdminModule={(mod) => {
@@ -366,6 +462,9 @@ export default function App() {
               onAddPayment={handleAddPayment}
               announcements={announcements}
               onAddAnnouncement={handleAddAnnouncement}
+              landingConfig={landingConfig}
+              onSaveLandingConfig={(newConfig) => setLandingConfig(newConfig)}
+              onPreviewLanding={handleOpenLandingView}
             />
           )}
 

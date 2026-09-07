@@ -17,7 +17,8 @@ export type AdminModule =
   | 'credentials'
   | 'whatsapp'
   | 'announcements'
-  | 'teachers';
+  | 'teachers'
+  | 'landing';
 
 export type TeacherModule =
   | 'attendance'
@@ -234,4 +235,117 @@ export interface ConocerCandidate {
   portafolioEvidencias: 'Completo' | 'Incompleto' | 'En revisión';
   juicioCompetencia: 'Competente' | 'Todavía no Competente' | 'En proceso';
   folioCertificado?: string;
+}
+
+// Landing Page Configuration Interfaces
+export interface NavItem {
+  id: string;
+  label: string;
+  href: string;
+  visible: boolean;
+}
+
+export interface HeroSlide {
+  id: string;
+  tag: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  primaryBtnText: string;
+  primaryBtnLink: string;
+  secondaryBtnText: string;
+  secondaryBtnLink: string;
+  imageUrl: string;
+}
+
+export interface BenefitItem {
+  id: string;
+  title: string;
+  description: string;
+  iconName: string;
+}
+
+export interface StatItem {
+  id: string;
+  value: string;
+  label: string;
+}
+
+export interface LandingPageConfig {
+  navbar: {
+    brandName: string;
+    brandTagline: string;
+    logoUrl?: string;
+    ctaButtonText: string;
+    ctaButtonLink: string;
+    showPortalButton: boolean;
+    portalButtonText: string;
+    items: NavItem[];
+  };
+  hero: {
+    autoplay: boolean;
+    autoplaySpeedSeconds: number;
+    slides: HeroSlide[];
+  };
+  benefitsSection: {
+    sectionTag: string;
+    title: string;
+    subtitle: string;
+    items: BenefitItem[];
+  };
+  workshopsSection: {
+    sectionTag: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    ctaCardText: string;
+    whatsappInquiryText: string;
+  };
+  stpsSection: {
+    sectionTag: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    agentRegistrationCode: string;
+    imageUrl: string;
+    bulletPoints: string[];
+    badgeText: string;
+    btnText: string;
+    btnLink: string;
+  };
+  aboutSection: {
+    sectionTag: string;
+    title: string;
+    subtitle: string;
+    paragraphs: string[];
+    imageUrl: string;
+    stats: StatItem[];
+  };
+  contactSection: {
+    sectionTag: string;
+    title: string;
+    subtitle: string;
+    address: string;
+    cityStateZip: string;
+    phoneMain: string;
+    phoneWhatsApp: string;
+    email: string;
+    officeHoursWeekdays: string;
+    officeHoursSaturdays: string;
+    mapEmbedUrl?: string;
+  };
+  floatingWhatsApp: {
+    enabled: boolean;
+    phoneNumber: string;
+    welcomeMessage: string;
+    tooltipText: string;
+  };
+  footer: {
+    aboutText: string;
+    copyrightText: string;
+    accreditationNote: string;
+    facebookUrl: string;
+    instagramUrl: string;
+    youtubeUrl: string;
+  };
 }
